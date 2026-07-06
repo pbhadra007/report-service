@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find src *)",
+      "Bash(cat src/app/layout.tsx)",
+      "Bash(cat src/app/globals.css)",
+      "Bash(cat components.json)",
+      "Bash(cat tailwind.config.ts)",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(mkdir -p src/_tmp)",
+      "Bash(rm -f *.tsbuildinfo tsconfig.tsbuildinfo)",
+      "Bash(npx eslint *)",
+      "Bash(npm run *)"
+    ]
+  }
+}
