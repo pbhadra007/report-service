@@ -11,7 +11,20 @@
       "Bash(mkdir -p src/_tmp)",
       "Bash(rm -f *.tsbuildinfo tsconfig.tsbuildinfo)",
       "Bash(npx eslint *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"GET / -> %{http_code} \\(redirect: %{redirect_url}\\)\\\\n\" http://localhost:3001/)",
+      "Bash(curl -s -o /dev/null -w \"GET /login -> %{http_code}\\\\n\" http://localhost:3001/login)",
+      "Bash(curl -s -o /dev/null -w \"GET /dashboard -> %{http_code} \\(redirect: %{redirect_url}\\)\\\\n\" http://localhost:3001/dashboard)",
+      "Bash(curl -s -D - -o /tmp/dashboard_body.html http://localhost:3001/dashboard)",
+      "Bash(curl -s -i http://localhost:3001/reports)",
+      "Bash(curl -s -D - -o /dev/null http://localhost:3001/dashboard)",
+      "Bash(taskkill //PID 15652 //F)",
+      "Bash(taskkill //PID 18772 //F)",
+      "Bash(curl -s -D - -o /dev/null http://localhost:3000/dashboard)",
+      "Bash(curl -s -D - -o /dev/null http://localhost:3000/reports)",
+      "Bash(curl -s -D - -o /dev/null http://localhost:3000/)",
+      "Bash(curl -s -D - -o /dev/null http://localhost:3000/login)",
+      "Bash(curl -s -b /tmp/cookies2.txt http://localhost:3000/api/auth/session)"
     ]
   }
 }
