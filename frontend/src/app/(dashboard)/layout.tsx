@@ -1,6 +1,5 @@
 import { Header } from "@/components/common/Header";
 import { Sidebar } from "@/components/common/Sidebar";
-import { CobStatusBanner } from "@/components/common/CobStatusBanner";
 
 export default function DashboardLayout({
   children,
@@ -9,11 +8,12 @@ export default function DashboardLayout({
 }>): React.JSX.Element {
   return (
     <div className="flex h-full flex-1 flex-col">
-      <Header />
-      <CobStatusBanner />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-        <main className="flex-1 overflow-auto p-6">{children}</main>
+        <div className="flex flex-1 flex-col overflow-hidden">
+          <Header />
+          <main className="flex-1 overflow-auto bg-[#F8F9FA] p-6">{children}</main>
+        </div>
       </div>
     </div>
   );

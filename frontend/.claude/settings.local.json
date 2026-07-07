@@ -24,7 +24,21 @@
       "Bash(curl -s -D - -o /dev/null http://localhost:3000/reports)",
       "Bash(curl -s -D - -o /dev/null http://localhost:3000/)",
       "Bash(curl -s -D - -o /dev/null http://localhost:3000/login)",
-      "Bash(curl -s -b /tmp/cookies2.txt http://localhost:3000/api/auth/session)"
+      "Bash(curl -s -b /tmp/cookies2.txt http://localhost:3000/api/auth/session)",
+      "Bash(powershell -Command \"Get-Process -Id 9752 -ErrorAction SilentlyContinue\")",
+      "Bash(powershell -Command \"Stop-Process -Id 9752 -Force\")",
+      "Bash(rm -f \"src/app/\\(dashboard\\)/reports/[id]/page.tsx\" \"src/app/\\(dashboard\\)/reports/page.tsx\" \"src/app/\\(dashboard\\)/reports/new/page.tsx\" \"src/components/report/ReportTable.tsx\" \"src/components/report/ReportFilters.tsx\" \"src/components/report/ExportToolbar.tsx\")",
+      "Bash(rmdir \"src/app/\\(dashboard\\)/reports/[id]\")",
+      "Bash(rmdir \"src/app/\\(dashboard\\)/reports/new\")",
+      "Bash(rmdir \"src/components/report\")",
+      "Bash(npx next *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3100/login)",
+      "Bash(break)",
+      "Bash(curl -s http://localhost:3100/login -o /tmp/login.html -w \"%{http_code}\\\\n\")",
+      "Bash(netstat -ano)",
+      "Bash(taskkill //PID 24388 //F)",
+      "Bash(rm -rf .next)",
+      "Bash(curl *)"
     ]
   }
 }

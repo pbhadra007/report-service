@@ -26,6 +26,10 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-destructive: var(--destructive);
   --color-card: var(--card);
+  --color-ipdc-pink: #ed017f;
+  --color-ipdc-pink-dark: #c4006a;
+  --color-ipdc-pink-light: #ffe6f4;
+  --color-ipdc-pink-50: #fff0f9;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

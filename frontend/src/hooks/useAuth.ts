@@ -16,7 +16,10 @@ export function useAuth(): UseAuthResult {
         name: session.user.name,
         email: session.user.email,
         role: session.user.role,
+        isAdmin: session.user.isAdmin,
         branchId: session.user.branchId,
+        employeeId: session.user.employeeId,
+        designation: session.user.designation,
       }
     : null;
 

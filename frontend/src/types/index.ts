@@ -12,20 +12,15 @@ export type Role =
 
 export type ExportFormat = "xlsx" | "pdf" | "csv";
 
-export type ReportCategory =
-  | "FINANCIAL"
-  | "LOAN"
-  | "DEPOSIT"
-  | "TREASURY"
-  | "OPERATIONAL"
-  | "MIS";
-
 export interface User {
   id: string;
   name: string;
   email: string;
   role: Role;
   branchId?: string;
+  isAdmin: boolean;
+  employeeId?: string;
+  designation?: string;
 }
 
 export interface ApiResponse<T> {

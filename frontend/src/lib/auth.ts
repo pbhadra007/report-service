@@ -3,6 +3,8 @@ import Credentials from "next-auth/providers/credentials";
 import type { Role } from "@/types";
 
 const MOCK_TEST_PASSWORD = "ipdc1234";
+const MOCK_ADMIN_EMAIL = "admin@ipdc.com";
+const MOCK_ADMIN_PASSWORD = "admin1234";
 
 declare module "@auth/core/types" {
   interface Session {
@@ -12,7 +14,10 @@ declare module "@auth/core/types" {
       name: string;
       email: string;
       role: Role;
+      isAdmin: boolean;
       branchId?: string;
+      employeeId?: string;
+      designation?: string;
     };
   }
 
@@ -21,7 +26,10 @@ declare module "@auth/core/types" {
     name: string;
     email: string;
     role: Role;
+    isAdmin: boolean;
     branchId?: string;
+    employeeId?: string;
+    designation?: string;
     accessToken: string;
   }
 }
@@ -31,7 +39,10 @@ declare module "@auth/core/jwt" {
     accessToken?: string;
     role?: Role;
     userId?: string;
+    isAdmin?: boolean;
     branchId?: string;
+    employeeId?: string;
+    designation?: string;
   }
 }
 
@@ -46,14 +57,29 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      // Mocked pending backend integration: any email + the shared test
-      // password succeeds and is granted a BRANCH_MANAGER session.
+      // Mocked pending backend integration: admin@ipdc.com grants an admin
+      // session; any other email + the shared test password grants a
+      // regular BRANCH_MANAGER session.
       authorize: async (credentials) => {
         const email = credentials?.email;
         const password = credentials?.password;
         if (typeof email !== "string" || typeof password !== "string") {
           return null;
         }
+
+        if (email === MOCK_ADMIN_EMAIL && password === MOCK_ADMIN_PASSWORD) {
+          return {
+            id: "mock-admin-1",
+            name: "Admin User",
+            email,
+            role: "SYSTEM_ADMIN",
+            isAdmin: true,
+            employeeId: "IPDC-0001",
+            designation: "System Administrator",
+            accessToken: "mock-access-token",
+          };
+        }
+
         if (password !== MOCK_TEST_PASSWORD) {
           return null;
         }
@@ -63,7 +89,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           name: email.split("@")[0] ?? email,
           email,
           role: "BRANCH_MANAGER",
+          isAdmin: false,
           branchId: "BR-001",
+          employeeId: "IPDC-1024",
+          designation: "Relationship Manager",
           accessToken: "mock-access-token",
         };
       },
@@ -75,7 +104,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.accessToken = user.accessToken;
         token.role = user.role;
         token.userId = user.id;
+        token.isAdmin = user.isAdmin;
         token.branchId = user.branchId;
+        token.employeeId = user.employeeId;
+        token.designation = user.designation;
       }
       return token;
     },
@@ -87,7 +119,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         name: token.name ?? "",
         email: token.email ?? "",
         role: token.role ?? "BRANCH_MANAGER",
+        isAdmin: token.isAdmin ?? false,
         branchId: token.branchId,
+        employeeId: token.employeeId,
+        designation: token.designation,
       };
       return typedSession;
     },
