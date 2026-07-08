@@ -38,7 +38,31 @@
       "Bash(netstat -ano)",
       "Bash(taskkill //PID 24388 //F)",
       "Bash(rm -rf .next)",
-      "Bash(curl *)"
+      "Bash(curl *)",
+      "Bash(ls tailwind.config.ts)",
+      "Bash(ls next.config.ts)",
+      "Bash(cat next.config.ts)",
+      "Bash(cat postcss.config.mjs)",
+      "Bash(ls public/images)",
+      "Bash(grep -rli \"toast\" src)",
+      "Bash(ls src/components/ui)",
+      "Bash(ls src/components)",
+      "Skill(run)",
+      "Read(//d//**)",
+      "Read(//c/Users/prabal.bhadra/**)",
+      "Read(//c/Users/prabal.bhadra/.claude/**)",
+      "Bash(npm ls *)",
+      "Bash(node -e \"require.resolve\\('playwright'\\)\")",
+      "Bash(where npx *)",
+      "Bash(timeout 20 npx --yes playwright --version)",
+      "Bash(npx playwright *)",
+      "Bash(node -e \"console.log\\(require.resolve\\('playwright'\\)\\)\")",
+      "Bash(xxd)",
+      "Bash(grep -o '\\\\.w-\\\\\\\\\\\\[140px\\\\\\\\\\\\][^}]*}')",
+      "Bash(powershell -NoProfile -Command \"Stop-Process -Id 23172 -Force\")",
+      "Bash(taskkill //F //PID 23172)",
+      "Bash(powershell -NoProfile -Command \"Get-NetTCPConnection -LocalPort 3000 -State Listen | Select-Object -ExpandProperty OwningProcess\")",
+      "Bash(node -e \"const i = require\\('lucide-react'\\); console.log\\(['CheckCircle2','Phone','Mail'].map\\(n => n + ': ' + \\(typeof i[n]\\)\\).join\\('\\\\n'\\)\\)\")"
     ]
   }
 }

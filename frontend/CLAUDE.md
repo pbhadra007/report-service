@@ -1,189 +1,66 @@
-Read CLAUDE.md carefully.
+Fix the Sign Up form in src/app/(auth)/login/page.tsx completely.
 
-IPDC brand color: #ED017F (pink/magenta)
-IPDC Logo: available at /images/ipdc-logo.png (use next/image)
+THE PROBLEM: Fields are too narrow — label and input are side by side 
+in small boxes. Fix by making everything full width stacked layout.
 
-Completely rebuild the UI to match the design references. 
-Here is exactly what to build:
+RULES:
+1. LAYOUT — Change ALL fields from flex-row layout to stacked layout:
+   - Label: full width, on top (block text-sm font-medium text-gray-700 mb-1)
+   - Input: full width below label (w-full rounded-xl border border-gray-200 
+     px-4 py-3 text-sm)
+   - Each field wrapped in: <div className="mb-4 w-full">
 
-═══════════════════════════════════════
-1. TAILWIND CONFIG — Add IPDC brand colors
-═══════════════════════════════════════
-In tailwind.config.ts add custom colors:
-  ipdc: {
-    pink: '#ED017F',
-    'pink-dark': '#C4006A',
-    'pink-light': '#FFE6F4',
-    'pink-50': '#FFF0F9',
-  }
+2. USER ID FIELD — Fixed prefix:
+   <div className="flex rounded-xl border border-gray-200 overflow-hidden">
+     <span className="px-4 py-3 bg-gray-100 text-gray-500 text-sm 
+                      border-r border-gray-200 font-medium select-none 
+                      whitespace-nowrap">IPDC-</span>
+     <input type="text" 
+            className="flex-1 px-3 py-3 text-sm focus:outline-none bg-white"
+            placeholder="Enter employee number" />
+   </div>
+   The "IPDC-" prefix is NOT editable. User types number only after it.
+   On form submit, combine: "IPDC-" + inputValue
 
-═══════════════════════════════════════
-2. LOGIN PAGE — Clean minimal design
-═══════════════════════════════════════
-Rebuild src/app/(auth)/login/page.tsx:
+3. MOBILE NO FIELD — Fixed prefix:
+   Same pattern as User ID:
+   <div className="flex rounded-xl border border-gray-200 overflow-hidden">
+     <span className="px-4 py-3 bg-gray-100 text-gray-500 text-sm 
+                      border-r border-gray-200 font-medium select-none
+                      whitespace-nowrap">+88</span>
+     <input type="tel"
+            className="flex-1 px-3 py-3 text-sm focus:outline-none bg-white"
+            placeholder="01XXXXXXXXX" />
+   </div>
+   The "+88" is NOT editable. On submit combine: "+88" + inputValue
 
-Layout: Full screen, split or centered card
-- Left side (or top): IPDC logo (next/image, /images/ipdc-logo.png)
-- Title: "IPDC Report Service"  
-- Subtitle: "Sign in to your account"
-- Username input (icon: user)
-- Password input with show/hide eye toggle (icon: lock)
-- "Sign In" button — bg-ipdc-pink hover:bg-ipdc-pink-dark text-white
-- Error message: red text below button
-- Footer: "© 2026 - Business Transformation, IPDC Finance Limited"
-- Background: light gray (#F5F5F5) with white card center
-- Card: rounded-2xl shadow-lg p-8 max-w-md
+4. ALL OTHER FIELDS — Full width stacked:
+   Name → w-full text input
+   Email ID → w-full email input
+   Designation → w-full text input
+   Seniority → w-full select dropdown
+   Department → w-full select dropdown
+   Employee Type → w-full select dropdown
+   Supervisor → w-full text input
+   Team Leader → w-full text input
 
-═══════════════════════════════════════
-3. USER PORTAL LAYOUT — Image 1 style
-═══════════════════════════════════════
-Rebuild src/app/(dashboard)/layout.tsx and 
-src/components/common/Sidebar.tsx:
+5. SUBMIT BUTTON:
+   w-full py-3 rounded-xl bg-[#232B2B] text-white font-semibold
+   hover:bg-white hover:text-[#232B2B] hover:border hover:border-[#232B2B]
+   transition-all duration-200
 
-LEFT SIDEBAR (fixed width 260px, full height):
-Background: white, right border: #E5E7EB
+6. CONTAINER WIDTH:
+   The sign up form container should be w-full max-w-sm mx-auto
+   with overflow-y-auto max-h-[70vh] for scrolling on small screens
 
-TOP SECTION:
-- IPDC logo at top (next/image, h-10, px-4, py-4)
-- Divider line
+7. SIGN IN / SIGN UP TABS — Make wider:
+   Container: w-full bg-gray-100 p-1 rounded-full flex mb-6
+   Each tab: flex-1 text-center py-2 text-sm font-medium rounded-full
+   Active: bg-white shadow text-gray-800
+   Inactive: text-gray-400
 
-USER PROFILE CARD (below logo):
-- Circular avatar with user initials (bg-ipdc-pink text-white)
-- User full name (font-semibold)
-- Employee ID or designation below name
-- Role badge: small pill, bg-ipdc-pink-light text-ipdc-pink
-
-NAVIGATION MENU (below profile):
-Label: "REPORT CATEGORIES" (text-xs text-gray-400 uppercase px-4 mb-2)
-Menu items with icons:
-- 🏠 Dashboard → /dashboard
-- 💰 Loan → /reports/loan
-- 🏦 Treasury Report → /reports/treasury  
-- 💳 Deposit → /reports/deposit
-- 📋 Other Reports → /reports/other
-- 📊 Finance Report → /reports/finance
-- 📜 Balance Certificate → /reports/balance-certificate
-- 📈 Summary Report → /reports/summary
-- 🗂️ IPDC CRB → /reports/crb
-
-Active state: bg-ipdc-pink text-white rounded-lg
-Hover state: bg-ipdc-pink-50 text-ipdc-pink
-
-BOTTOM OF SIDEBAR:
-- Divider
-- Sign out button (icon + text, text-gray-500 hover:text-red-500)
-
-TOP HEADER BAR (main content area, full width):
-- Height: 64px, white background, bottom border
-- Left: Page title (dynamic, e.g., "Deposit Reports")
-- Right: 
-  - COB Status badge (red/green/amber)
-  - Notification bell icon
-  - User name + designation text
-  - Avatar circle (initials, bg-ipdc-pink)
-
-MAIN CONTENT AREA:
-- Background: #F8F9FA
-- Padding: p-6
-
-═══════════════════════════════════════
-4. REPORT CATEGORY PAGE — Modern card grid
-═══════════════════════════════════════
-Rebuild src/app/(dashboard)/reports/[category]/page.tsx:
-
-Page layout:
-- Breadcrumb: Dashboard > Loan Reports
-- Page title with category icon
-- Search box: "Search reports..." (full width, rounded, with search icon)
-- Report count: "Showing 24 reports"
-
-Report cards grid (3 columns desktop, 2 tablet, 1 mobile):
-┌─────────────────────────────────┐
-│  [📊 icon - ipdc-pink]          │
-│  Loan Sheet                     │
-│  Report ID: 1001                │
-│  ─────────────────────────────  │
-│  [Generate Report →]            │
-└─────────────────────────────────┘
-
-Card style:
-- bg-white rounded-xl shadow-sm border border-gray-100
-- hover: shadow-md border-ipdc-pink transition
-- Icon: bg-ipdc-pink-50 text-ipdc-pink rounded-lg p-2
-- Report name: font-semibold text-gray-800
-- Report ID: text-xs text-gray-400
-- Button: bg-ipdc-pink hover:bg-ipdc-pink-dark text-white 
-  w-full rounded-lg py-2 text-sm font-medium
-
-═══════════════════════════════════════
-5. REPORT PARAMETER FORM PAGE — Modern style
-═══════════════════════════════════════
-Rebuild src/app/(dashboard)/reports/[category]/[reportId]/page.tsx:
-
-Layout:
-- Breadcrumb: Dashboard > Loan > Loan Sheet
-- Back button: "← Back to Loan Reports"
-
-Main card (bg-white rounded-xl shadow-sm p-6):
-- Title: Report name (font-bold text-xl text-gray-800)
-- Report ID badge: "ID: 1001" (small pill, bg-gray-100)
-- Divider
-
-PARAMETERS SECTION:
-- Section label: "Report Parameters" (font-semibold text-gray-600)
-- Form fields in 2-column grid:
-  Each field:
-  - Label (text-sm font-medium text-gray-700)
-  - Input (border rounded-lg px-3 py-2 w-full focus:ring-2 
-    focus:ring-ipdc-pink focus:border-ipdc-pink)
-  - Date fields: use date picker input type="date"
-
-REPORT FORMAT SECTION (separate card below):
-- Section label: "Report Format"
-- Two option cards side by side:
-  ┌──────────────┐  ┌──────────────┐
-  │  📄 PDF      │  │  📊 Excel    │
-  │  Format      │  │  Format      │
-  │  ● Selected  │  │  ○           │
-  └──────────────┘  └──────────────┘
-  Selected card: border-2 border-ipdc-pink bg-ipdc-pink-50
-
-ACTION BUTTONS:
-- [Generate Report] — bg-ipdc-pink text-white px-8 py-3 rounded-lg 
-  font-semibold with loading spinner when generating
-- [Reset Input] — border border-gray-300 text-gray-600 px-8 py-3 
-  rounded-lg ml-3
-
-Footer: "© 2026 - Business Transformation, IPDC Finance Limited"
-
-═══════════════════════════════════════
-6. DASHBOARD PAGE — For now, clean welcome
-═══════════════════════════════════════
-Rebuild src/app/(dashboard)/dashboard/page.tsx:
-
-Show:
-- Welcome card: "Welcome back, [Name]!" with IPDC logo
-- Stats row (4 cards):
-  ├── Total Reports Available: [count from user permissions]
-  ├── Last Report Generated: "Never" or date
-  ├── Last Login: date/time  
-  └── COB Status: Red/Green badge
-- Quick Access section: 
-  "Your Recent Reports" — shows last 4 accessed reports
-  (empty state: "No reports generated yet — browse categories from the sidebar")
-- Category overview: 
-  Grid showing each category with report count user can access
-
-═══════════════════════════════════════
-7. ADMIN REDIRECT LOGIC
-═══════════════════════════════════════
-In src/lib/auth.ts mock credentials:
-- any@email.com + "ipdc1234" → isAdmin: false → redirect to /dashboard
-- admin@ipdc.com + "admin1234" → isAdmin: true → redirect to /admin/dashboard
-
-In middleware.ts:
-- /admin/* routes → require isAdmin: true → else redirect to /dashboard
-- /dashboard/* routes → require authenticated → else redirect to /login
-
-After all changes run: npm run dev
-Check for TypeScript errors: npx tsc --noEmit
+After changes:
+- Run npm run dev
+- Check npx tsc --noEmit
+- Fix all TypeScript errors
+- No any types
