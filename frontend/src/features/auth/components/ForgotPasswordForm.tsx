@@ -21,7 +21,7 @@ const submitButtonClassName =
 
 export function ForgotPasswordForm({ onBackToSignIn, onResetSuccess }: ForgotPasswordFormProps): React.JSX.Element {
   const [step, setStep] = useState<Step>("request");
-  const [userId, setUserId] = useState("");
+  const [userIdSuffix, setUserIdSuffix] = useState("");
   const [method, setMethod] = useState<OtpMethod>("sms");
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
   const [secondsLeft, setSecondsLeft] = useState(RESEND_SECONDS);
@@ -186,13 +186,16 @@ export function ForgotPasswordForm({ onBackToSignIn, onResetSuccess }: ForgotPas
       <form onSubmit={handleRequestSubmit} className="flex flex-col gap-6">
         <div className="flex flex-col gap-1">
           <label className="text-sm font-medium text-gray-700">Enter User ID</label>
-          <input
-            placeholder="IPDC-"
-            value={userId}
-            onChange={(event) => setUserId(event.target.value)}
-            className={inputClassName}
-            required
-          />
+          <div className="flex w-full items-center rounded-full border border-gray-200 bg-white pl-4 pr-1 focus-within:ring-2 focus-within:ring-gray-300">
+            <span className="select-none whitespace-nowrap text-sm font-medium text-gray-400">IPDC-</span>
+            <input
+              placeholder="Enter User ID"
+              value={userIdSuffix}
+              onChange={(event) => setUserIdSuffix(event.target.value)}
+              className="min-w-0 flex-1 bg-transparent py-3 pl-1 pr-3 font-poppins text-sm text-gray-700 outline-none"
+              required
+            />
+          </div>
         </div>
 
         <div className="flex flex-col gap-2">
