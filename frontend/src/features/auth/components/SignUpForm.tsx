@@ -38,6 +38,19 @@ const DEPARTMENT_OPTIONS = [
 
 const EMPLOYEE_TYPE_OPTIONS = ["FTE", "OTS", "ITN", "CONTRACT", "INTERN"] as const;
 
+const DESIGNATION_OPTIONS = [
+  "Relationship Manager",
+  "Credit Analyst",
+  "Branch Manager",
+  "Operations Officer",
+  "Recovery Officer",
+  "Compliance Officer",
+  "IT Officer",
+  "HR Officer",
+  "Finance Officer",
+  "System Administrator",
+] as const;
+
 const EMAIL_DOMAIN = "@ipdcbd.com";
 
 const signUpSchema = z.object({
@@ -190,7 +203,16 @@ export function SignUpForm({ onBackToSignIn }: SignUpFormProps): React.JSX.Eleme
         />
       </Field>
       <Field label="Designation" error={errors.designation?.message}>
-        <input className={inputClassName} {...register("designation")} />
+        <select className={inputClassName} defaultValue="" {...register("designation")}>
+          <option value="" disabled>
+            Select...
+          </option>
+          {DESIGNATION_OPTIONS.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
       </Field>
       <Field label="Seniority" error={errors.seniority?.message}>
         <select className={inputClassName} defaultValue="" {...register("seniority")}>
