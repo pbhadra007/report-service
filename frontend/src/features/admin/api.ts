@@ -48,6 +48,43 @@ export async function createAdminUser(payload: CreateUserPayload): Promise<Admin
   return response.data;
 }
 
+export interface AdminUserDetail {
+  id: string;
+  userId: string;
+  employeeId: string;
+  rmCode?: string;
+  name: string;
+  employeeType: EmployeeType;
+  mobile: string;
+  email: string;
+  branchCodes: string[];
+  costCenterCodes: string[];
+  department: string;
+  designation: string;
+  supervisor?: string;
+  teamLeader?: string;
+  passwordRemainSame: boolean;
+  isAdmin: boolean;
+  isSuperAdmin: boolean;
+  authorizedMac?: string;
+  authorizedIp?: string;
+  badAttempts: number;
+  forcePassChange: boolean;
+  checkExpiry: boolean;
+  unlockUser: boolean;
+  activeUser: boolean;
+}
+
+export async function fetchAdminUserById(id: string): Promise<AdminUserDetail> {
+  const response = await apiClient.get<AdminUserDetail>(`/admin/users/${id}`);
+  return response.data;
+}
+
+export async function updateAdminUser(id: string, payload: CreateUserPayload): Promise<AdminUser> {
+  const response = await apiClient.put<AdminUser>(`/admin/users/${id}`, payload);
+  return response.data;
+}
+
 export interface UserReportAccessSummary {
   userId: string;
   reportIds: number[];
