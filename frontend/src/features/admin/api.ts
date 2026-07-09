@@ -85,6 +85,20 @@ export async function updateAdminUser(id: string, payload: CreateUserPayload): P
   return response.data;
 }
 
+export async function resetAdminUserPassword(id: string): Promise<void> {
+  await apiClient.post(`/admin/users/${id}/reset-password`);
+}
+
+export async function toggleAdminUserLock(id: string): Promise<AdminUser> {
+  const response = await apiClient.post<AdminUser>(`/admin/users/${id}/toggle-lock`);
+  return response.data;
+}
+
+export async function deactivateAdminUser(id: string): Promise<AdminUser> {
+  const response = await apiClient.post<AdminUser>(`/admin/users/${id}/deactivate`);
+  return response.data;
+}
+
 export interface UserReportAccessSummary {
   userId: string;
   reportIds: number[];

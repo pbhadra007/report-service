@@ -1,11 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { Search, UserPlus, ArrowRight } from "lucide-react";
-import { fetchAdminUsers, type AdminUser } from "@/features/admin/api";
+import { Search, UserPlus, MoreVertical } from "lucide-react";
+import {
+  fetchAdminUsers,
+  resetAdminUserPassword,
+  toggleAdminUserLock,
+  deactivateAdminUser,
+  type AdminUser,
+} from "@/features/admin/api";
 import { ROLE_PERMISSIONS } from "@/config/roles.config";
 import { cn } from "@/lib/utils";
 
@@ -18,15 +25,162 @@ const inputClass =
 const selectClass = cn(inputClass, "appearance-none cursor-pointer");
 const labelClass = "mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500";
 
+type UserAction = "reset-password" | "toggle-lock" | "deactivate";
+
+interface UserActionsMenuProps {
+  user: AdminUser;
+  onAction: (action: UserAction, user: AdminUser) => void;
+}
+
+function UserActionsMenu({ user, onAction }: UserActionsMenuProps): React.JSX.Element {
+  const [open, setOpen] = useState(false);
+  const [position, setPosition] = useState<{ top: number; right: number } | null>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+
+    function updatePosition(): void {
+      const rect = buttonRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      setPosition({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
+    }
+
+    function handleClickOutside(event: MouseEvent): void {
+      const target = event.target as Node;
+      if (
+        buttonRef.current &&
+        !buttonRef.current.contains(target) &&
+        menuRef.current &&
+        !menuRef.current.contains(target)
+      ) {
+        setOpen(false);
+      }
+    }
+
+    function handleScroll(): void {
+      setOpen(false);
+    }
+
+    updatePosition();
+    document.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("scroll", handleScroll, true);
+    window.addEventListener("resize", updatePosition);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("scroll", handleScroll, true);
+      window.removeEventListener("resize", updatePosition);
+    };
+  }, [open]);
+
+  const menuItemClass = "block w-full rounded-lg px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50";
+
+  return (
+    <>
+      <button
+        ref={buttonRef}
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        aria-label="More actions"
+        className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+      >
+        <MoreVertical className="w-4 h-4" />
+      </button>
+
+      {open &&
+        position &&
+        createPortal(
+          <div
+            ref={menuRef}
+            style={{ position: "fixed", top: position.top, right: position.right }}
+            className="z-50 w-48 rounded-xl border border-gray-100 bg-white p-1.5 shadow-lg"
+          >
+            <Link href={`/admin/users/${user.id}`} className={menuItemClass} onClick={() => setOpen(false)}>
+              View Details
+            </Link>
+            <Link href={`/admin/users/${user.id}`} className={menuItemClass} onClick={() => setOpen(false)}>
+              Edit User
+            </Link>
+            <button
+              type="button"
+              className={menuItemClass}
+              onClick={() => {
+                setOpen(false);
+                onAction("reset-password", user);
+              }}
+            >
+              Reset Password
+            </button>
+            <button
+              type="button"
+              className={menuItemClass}
+              onClick={() => {
+                setOpen(false);
+                onAction("toggle-lock", user);
+              }}
+            >
+              Lock / Unlock User
+            </button>
+            <button
+              type="button"
+              className="block w-full rounded-lg px-3 py-2 text-left text-sm text-red-500 hover:bg-red-50"
+              onClick={() => {
+                setOpen(false);
+                onAction("deactivate", user);
+              }}
+            >
+              Deactivate User
+            </button>
+          </div>,
+          document.body,
+        )}
+    </>
+  );
+}
+
 const columnHelper = createColumnHelper<AdminUser>();
 
 export default function AdminPage(): React.JSX.Element {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [actionMessage, setActionMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
+  const queryClient = useQueryClient();
   const usersQuery = useQuery({ queryKey: ["admin", "users"], queryFn: fetchAdminUsers });
   const users = usersQuery.data;
+
+  const resetPasswordMutation = useMutation({
+    mutationFn: resetAdminUserPassword,
+    onSuccess: () => setActionMessage({ type: "success", text: "Password reset email sent." }),
+    onError: () => setActionMessage({ type: "error", text: "Failed to reset password." }),
+  });
+
+  const toggleLockMutation = useMutation({
+    mutationFn: toggleAdminUserLock,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
+      setActionMessage({ type: "success", text: "User lock status updated." });
+    },
+    onError: () => setActionMessage({ type: "error", text: "Failed to update lock status." }),
+  });
+
+  const deactivateMutation = useMutation({
+    mutationFn: deactivateAdminUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
+      setActionMessage({ type: "success", text: "User deactivated." });
+    },
+    onError: () => setActionMessage({ type: "error", text: "Failed to deactivate user." }),
+  });
+
+  const handleAction = (action: UserAction, user: AdminUser): void => {
+    setActionMessage(null);
+    if (action === "reset-password") resetPasswordMutation.mutate(user.id);
+    if (action === "toggle-lock") toggleLockMutation.mutate(user.id);
+    if (action === "deactivate") deactivateMutation.mutate(user.id);
+  };
 
   const filteredUsers = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -71,19 +225,12 @@ export default function AdminPage(): React.JSX.Element {
         ),
       }),
       columnHelper.display({
-        id: "edit",
-        header: "",
-        cell: (info) => (
-          <Link
-            href={`/admin/users/${info.row.original.id}`}
-            className="inline-flex items-center gap-1 text-xs font-medium text-[#ED017F] hover:underline"
-          >
-            Edit
-            <ArrowRight className="h-3 w-3" />
-          </Link>
-        ),
+        id: "actions",
+        header: "Actions",
+        cell: (info) => <UserActionsMenu user={info.row.original} onAction={handleAction} />,
       }),
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
@@ -173,6 +320,12 @@ export default function AdminPage(): React.JSX.Element {
         <p className="mt-4 text-xs text-gray-400">
           Showing {filteredUsers.length} of {users?.length ?? 0} users
         </p>
+
+        {actionMessage && (
+          <p className={cn("mt-4 text-sm font-medium", actionMessage.type === "success" ? "text-green-700" : "text-red-600")}>
+            {actionMessage.text}
+          </p>
+        )}
 
         <div className="mt-4 overflow-x-auto rounded-xl border border-gray-100">
           <table className="w-full text-left text-sm">
