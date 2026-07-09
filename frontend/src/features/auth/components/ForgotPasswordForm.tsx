@@ -14,10 +14,12 @@ interface ForgotPasswordFormProps {
 const RESEND_SECONDS = 30;
 
 const inputClassName =
-  "w-full rounded-full border border-gray-200 bg-white px-4 py-3 font-poppins text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300";
+  "w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 font-poppins text-sm text-gray-700 " +
+  "focus:outline-none focus:ring-2 focus:ring-[#232B2B] focus:border-transparent placeholder:text-gray-300 " +
+  "transition-all duration-200";
 
 const submitButtonClassName =
-  "w-full rounded-full border border-[#232B2B] bg-[#232B2B] py-3 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-white hover:text-[#232B2B] disabled:opacity-60";
+  "w-full rounded-xl border border-[#232B2B] bg-[#232B2B] py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-white hover:text-[#232B2B] disabled:opacity-60";
 
 export function ForgotPasswordForm({ onBackToSignIn, onResetSuccess }: ForgotPasswordFormProps): React.JSX.Element {
   const [step, setStep] = useState<Step>("request");
@@ -150,7 +152,7 @@ export function ForgotPasswordForm({ onBackToSignIn, onResetSuccess }: ForgotPas
               value={digit}
               onChange={(event) => handleOtpChange(index, event.target.value)}
               onKeyDown={(event) => handleOtpKeyDown(index, event)}
-              className="h-10 w-10 rounded-full border border-gray-200 text-center text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
+              className="h-10 w-10 rounded-xl border border-gray-200 text-center text-sm focus:outline-none focus:ring-2 focus:ring-[#232B2B]"
             />
           ))}
         </div>
@@ -179,20 +181,20 @@ export function ForgotPasswordForm({ onBackToSignIn, onResetSuccess }: ForgotPas
 
   return (
     <div>
-      <div className="mb-6 w-full rounded-full border border-gray-200 bg-gray-50 py-3 text-center text-sm font-semibold text-gray-700">
+      <div className="mb-6 w-full rounded-xl border border-gray-200 bg-gray-50 py-3 text-center text-sm font-semibold text-gray-700">
         Forget Password
       </div>
 
       <form onSubmit={handleRequestSubmit} className="flex flex-col gap-6">
         <div className="flex flex-col gap-1">
           <label className="text-sm font-medium text-gray-700">Enter User ID</label>
-          <div className="flex w-full items-center rounded-full border border-gray-200 bg-white pl-4 pr-1 focus-within:ring-2 focus-within:ring-gray-300">
+          <div className="flex w-full items-center overflow-hidden rounded-xl border border-gray-200 bg-white pl-4 pr-1 focus-within:ring-2 focus-within:ring-[#232B2B]">
             <span className="select-none whitespace-nowrap text-sm font-medium text-gray-400">IPDC-</span>
             <input
               placeholder="Enter User ID"
               value={userIdSuffix}
               onChange={(event) => setUserIdSuffix(event.target.value)}
-              className="min-w-0 flex-1 bg-transparent py-3 pl-1 pr-3 font-poppins text-sm text-gray-700 outline-none"
+              className="min-w-0 flex-1 bg-transparent py-2.5 pl-1 pr-3 font-poppins text-sm text-gray-700 outline-none"
               required
             />
           </div>
@@ -201,7 +203,7 @@ export function ForgotPasswordForm({ onBackToSignIn, onResetSuccess }: ForgotPas
         <div className="flex flex-col gap-2">
           <label className="text-sm font-medium text-gray-700">Send OTP via</label>
           <div className="flex items-center justify-between">
-            <span className="rounded-full bg-[#232B2B] px-6 py-2 text-sm font-medium text-white">OTP</span>
+            <span className="rounded-xl bg-[#232B2B] px-6 py-2 text-sm font-medium text-white">OTP</span>
 
             <button type="button" onClick={() => setMethod("sms")} className="flex items-center gap-2 text-sm text-gray-700">
               SMS

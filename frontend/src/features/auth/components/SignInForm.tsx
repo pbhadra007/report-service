@@ -56,7 +56,9 @@ function generateCaptcha(): Captcha {
 }
 
 const fieldClassName =
-  "w-full rounded-full border border-gray-200 bg-white px-4 py-3 font-poppins text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300";
+  "w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 font-poppins text-sm text-gray-700 " +
+  "focus:outline-none focus:ring-2 focus:ring-[#232B2B] focus:border-transparent placeholder:text-gray-300 " +
+  "transition-all duration-200";
 
 interface SignInFormProps {
   onForgotPassword: () => void;
@@ -124,7 +126,7 @@ export function SignInForm({ onForgotPassword }: SignInFormProps): React.JSX.Ele
         </label>
         <div
           className={cn(
-            "flex w-full items-center rounded-full border border-gray-200 bg-white pl-4 pr-1 focus-within:ring-2 focus-within:ring-gray-300",
+            "flex w-full items-center overflow-hidden rounded-xl border border-gray-200 bg-white pl-4 pr-1 focus-within:ring-2 focus-within:ring-[#232B2B]",
             errors.usernameSuffix && "border-red-500",
           )}
         >
@@ -134,7 +136,7 @@ export function SignInForm({ onForgotPassword }: SignInFormProps): React.JSX.Ele
             type="text"
             autoComplete="username"
             placeholder="Enter User ID"
-            className="min-w-0 flex-1 bg-transparent py-3 pl-1 pr-3 font-poppins text-sm text-gray-700 outline-none"
+            className="min-w-0 flex-1 bg-transparent py-2.5 pl-1 pr-3 font-poppins text-sm text-gray-700 outline-none"
             {...register("usernameSuffix")}
           />
         </div>
@@ -149,7 +151,7 @@ export function SignInForm({ onForgotPassword }: SignInFormProps): React.JSX.Ele
           <button
             type="button"
             onClick={onForgotPassword}
-            className="cursor-pointer text-xs text-red-500 hover:text-red-600"
+            className="cursor-pointer text-xs text-[#ED017F] hover:text-[#c4006a]"
           >
             Forget Password
           </button>
@@ -176,7 +178,7 @@ export function SignInForm({ onForgotPassword }: SignInFormProps): React.JSX.Ele
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <div className="flex items-center justify-between gap-3 rounded-full border border-gray-200 bg-gray-50 py-1.5 pl-5 pr-1.5">
+        <div className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-gray-50 py-1.5 pl-5 pr-1.5">
           <div className="flex items-center gap-2 text-sm font-medium text-gray-600">
             <span>
               {captcha.a} {captcha.operator} {captcha.b} =
@@ -196,7 +198,7 @@ export function SignInForm({ onForgotPassword }: SignInFormProps): React.JSX.Ele
             placeholder="Answer"
             value={captchaAnswer}
             onChange={(event) => setCaptchaAnswer(event.target.value)}
-            className="w-28 rounded-full border border-gray-200 bg-white px-3 py-2 text-center font-poppins text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300"
+            className="w-28 rounded-xl border border-gray-200 bg-white px-3 py-2 text-center font-poppins text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#232B2B]"
           />
         </div>
         {captchaError && <p className="text-xs text-red-600">{captchaError}</p>}
@@ -207,7 +209,7 @@ export function SignInForm({ onForgotPassword }: SignInFormProps): React.JSX.Ele
       <button
         type="submit"
         disabled={isSubmitting}
-        className="mt-2 w-full rounded-full border border-[#232B2B] bg-[#232B2B] py-3 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-white hover:text-[#232B2B] disabled:opacity-60"
+        className="mt-2 w-full rounded-xl border border-[#232B2B] bg-[#232B2B] py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-white hover:text-[#232B2B] disabled:opacity-60"
       >
         {isSubmitting ? "Logging in..." : "Log in"}
       </button>

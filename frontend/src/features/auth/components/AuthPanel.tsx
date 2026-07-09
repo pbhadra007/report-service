@@ -20,20 +20,20 @@ export function AuthPanel(): React.JSX.Element {
   return (
     <div className="w-full">
       {view === "forgot" ? (
-        <div className="mb-6 flex w-full rounded-full bg-gray-100 p-1">
+        <div className="mb-6 flex w-full rounded-xl bg-gray-100 p-1">
           <button
             type="button"
             onClick={() => setView("signin")}
-            className="flex-1 rounded-full bg-white px-6 py-2 text-sm font-semibold text-[#232B2B] shadow-sm"
+            className="flex-1 rounded-xl bg-white px-6 py-2 text-sm font-semibold text-[#232B2B] shadow-sm"
           >
             Sign In
           </button>
         </div>
       ) : (
-        <div className="relative mb-6 flex w-full rounded-full bg-gray-100 p-1">
+        <div className="relative mb-6 flex w-full rounded-xl bg-gray-100 p-1">
           <div
             className={cn(
-              "absolute inset-y-1 left-1 w-[calc(50%-4px)] rounded-full bg-white shadow-sm transition-transform duration-300 ease-out",
+              "absolute inset-y-1 left-1 w-[calc(50%-4px)] rounded-xl bg-white shadow-sm transition-transform duration-300 ease-out",
               view === "signup" && "translate-x-full",
             )}
           />
@@ -41,7 +41,7 @@ export function AuthPanel(): React.JSX.Element {
             type="button"
             onClick={() => setView("signin")}
             className={cn(
-              "relative z-10 flex-1 rounded-full px-6 py-2 text-sm transition-colors",
+              "relative z-10 flex-1 rounded-xl px-6 py-2 text-sm transition-colors",
               view === "signin" ? "font-semibold text-[#232B2B]" : "font-medium text-gray-400",
             )}
           >
@@ -51,7 +51,7 @@ export function AuthPanel(): React.JSX.Element {
             type="button"
             onClick={() => setView("signup")}
             className={cn(
-              "relative z-10 flex-1 rounded-full px-6 py-2 text-sm transition-colors",
+              "relative z-10 flex-1 rounded-xl px-6 py-2 text-sm transition-colors",
               view === "signup" ? "font-semibold text-[#232B2B]" : "font-medium text-gray-400",
             )}
           >
@@ -75,7 +75,7 @@ export function AuthPanel(): React.JSX.Element {
       </div>
 
       {toast && (
-        <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-[#232B2B] px-5 py-2.5 text-sm font-medium text-white shadow-lg">
+        <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-xl bg-[#232B2B] px-5 py-2.5 text-sm font-medium text-white shadow-lg">
           {toast}
         </div>
       )}
