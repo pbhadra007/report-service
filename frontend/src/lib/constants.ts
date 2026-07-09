@@ -3,8 +3,6 @@ export const API_BASE_URL: string =
 
 export const APP_ENV: string = process.env.NEXT_PUBLIC_APP_ENV ?? "dev";
 
-export const COB_STATUS_POLL_INTERVAL_MS = 60 * 1000;
-
 export const REPORT_STALE_TIME_MS = 5 * 60 * 1000;
 
 export const DEFAULT_PAGE_SIZE = 25;

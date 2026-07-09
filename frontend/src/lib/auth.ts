@@ -3,7 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import type { Role } from "@/types";
 
 const MOCK_TEST_PASSWORD = "ipdc1234";
-const MOCK_ADMIN_EMAIL = "admin@ipdc.com";
+const MOCK_ADMIN_EMAIL = "IPDC-admin";
 const MOCK_ADMIN_PASSWORD = "admin1234";
 
 declare module "@auth/core/types" {
@@ -57,9 +57,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      // Mocked pending backend integration: admin@ipdc.com grants an admin
-      // session; any other email + the shared test password grants a
-      // regular BRANCH_MANAGER session.
+      // Mocked pending backend integration: username "admin" (submitted as
+      // "IPDC-admin" by the sign-in form) grants an admin session; any other
+      // username + the shared test password grants a regular BRANCH_MANAGER
+      // session.
       authorize: async (credentials) => {
         const email = credentials?.email;
         const password = credentials?.password;

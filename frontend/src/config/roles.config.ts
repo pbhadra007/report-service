@@ -9,7 +9,6 @@ export interface RolePermissions {
   regulatory: ReportAccessScope;
   audit: ReportAccessScope;
   admin: boolean;
-  etlMonitor: boolean;
   dynamicReportBuilder: boolean;
 }
 
@@ -21,7 +20,6 @@ export const ROLE_PERMISSIONS: Record<Role, RolePermissions> = {
     regulatory: "FULL",
     audit: "FULL",
     admin: true,
-    etlMonitor: true,
     dynamicReportBuilder: true,
   },
   IT_OPERATIONS: {
@@ -31,7 +29,6 @@ export const ROLE_PERMISSIONS: Record<Role, RolePermissions> = {
     regulatory: "NONE",
     audit: "FULL",
     admin: false,
-    etlMonitor: true,
     dynamicReportBuilder: false,
   },
   MD_CEO: {
@@ -41,7 +38,6 @@ export const ROLE_PERMISSIONS: Record<Role, RolePermissions> = {
     regulatory: "SCOPED",
     audit: "NONE",
     admin: false,
-    etlMonitor: false,
     dynamicReportBuilder: false,
   },
   CFO_FINANCE_HEAD: {
@@ -51,7 +47,6 @@ export const ROLE_PERMISSIONS: Record<Role, RolePermissions> = {
     regulatory: "FULL",
     audit: "NONE",
     admin: false,
-    etlMonitor: false,
     dynamicReportBuilder: true,
   },
   COMPLIANCE_OFFICER: {
@@ -61,7 +56,6 @@ export const ROLE_PERMISSIONS: Record<Role, RolePermissions> = {
     regulatory: "FULL",
     audit: "SCOPED",
     admin: false,
-    etlMonitor: false,
     dynamicReportBuilder: false,
   },
   INTERNAL_AUDITOR: {
@@ -71,7 +65,6 @@ export const ROLE_PERMISSIONS: Record<Role, RolePermissions> = {
     regulatory: "FULL",
     audit: "FULL",
     admin: false,
-    etlMonitor: false,
     dynamicReportBuilder: false,
   },
   CREDIT_HEAD: {
@@ -81,7 +74,6 @@ export const ROLE_PERMISSIONS: Record<Role, RolePermissions> = {
     regulatory: "SCOPED",
     audit: "NONE",
     admin: false,
-    etlMonitor: false,
     dynamicReportBuilder: false,
   },
   TREASURY_HEAD: {
@@ -91,7 +83,6 @@ export const ROLE_PERMISSIONS: Record<Role, RolePermissions> = {
     regulatory: "SCOPED",
     audit: "NONE",
     admin: false,
-    etlMonitor: false,
     dynamicReportBuilder: false,
   },
   BRANCH_MANAGER: {
@@ -101,7 +92,6 @@ export const ROLE_PERMISSIONS: Record<Role, RolePermissions> = {
     regulatory: "NONE",
     audit: "NONE",
     admin: false,
-    etlMonitor: false,
     dynamicReportBuilder: false,
   },
   RELATIONSHIP_MANAGER: {
@@ -111,7 +101,6 @@ export const ROLE_PERMISSIONS: Record<Role, RolePermissions> = {
     regulatory: "NONE",
     audit: "NONE",
     admin: false,
-    etlMonitor: false,
     dynamicReportBuilder: false,
   },
 };

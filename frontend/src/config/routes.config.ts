@@ -81,11 +81,6 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
     allowedRoles: ["SYSTEM_ADMIN"],
   },
   {
-    path: "/etl",
-    label: "ETL Monitor",
-    allowedRoles: ["SYSTEM_ADMIN", "IT_OPERATIONS"],
-  },
-  {
     path: "/profile",
     label: "Profile",
     allowedRoles: [

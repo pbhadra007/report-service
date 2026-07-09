@@ -36,14 +36,6 @@ export interface PaginatedResponse<T> {
   totalPages: number;
 }
 
-export type CobLoadStatus = "FRESH" | "LOADING" | "FAILED";
-
-export interface CobStatus {
-  cobDate: string;
-  lastLoadedAt: string;
-  status: CobLoadStatus;
-}
-
 export interface KpiMetric {
   id: string;
   label: string;

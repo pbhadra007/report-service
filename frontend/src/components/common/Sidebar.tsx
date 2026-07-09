@@ -1,19 +1,36 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
+import {
+  LayoutDashboard,
+  ShieldCheck,
+  Settings,
+  Users,
+  FileText,
+  ClipboardList,
+  LogOut,
+  ChevronDown,
+} from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useReportAccess } from "@/hooks/useReportAccess";
 import { REPORT_CATEGORIES, getReportsByCategory } from "@/config/reports.config";
 import { cn } from "@/lib/utils";
 
-interface SidebarNavItem {
+interface AdminSubItem {
   path: string;
   label: string;
-  icon: string;
+  icon: typeof Settings;
 }
+
+const ADMIN_SUB_ITEMS: AdminSubItem[] = [
+  { path: "/admin/settings", label: "Settings", icon: Settings },
+  { path: "/admin", label: "User Management", icon: Users },
+  { path: "/admin/reports", label: "Report Management", icon: FileText },
+];
 
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -26,89 +43,138 @@ export function Sidebar(): React.JSX.Element {
   const pathname = usePathname();
   const { accessibleReportIds } = useReportAccess();
 
-  const navItems: SidebarNavItem[] = user
-    ? [
-        { path: "/dashboard", label: "Dashboard", icon: "🏠" },
-        ...REPORT_CATEGORIES.filter((category) =>
-          getReportsByCategory(category.id).some((report) => accessibleReportIds.includes(report.reportId)),
-        ).map((category) => ({
-          path: `/reports/${category.id}`,
-          label: category.label,
-          icon: category.icon,
-        })),
-      ]
-    : [];
+  const isAdminSection = pathname.startsWith("/admin");
+  const [isAdminOpen, setIsAdminOpen] = useState(isAdminSection);
+
+  const reportCategories = REPORT_CATEGORIES.filter((category) =>
+    getReportsByCategory(category.id).some((report) => accessibleReportIds.includes(report.reportId)),
+  );
 
   return (
-    <nav className="flex h-full w-[260px] shrink-0 flex-col border-r border-[#E5E7EB] bg-white">
-      <div className="flex flex-col">
-        <div className="flex items-center px-4 py-4">
-          <Image src="/images/ipdc-logo.png" alt="IPDC" width={140} height={40} className="h-10 w-auto" priority />
-        </div>
-        <div className="border-b border-[#E5E7EB]" />
+    <nav className="flex h-full w-[240px] shrink-0 flex-col overflow-y-auto border-r border-[#E5E7EB] bg-white shadow-[2px_0_8px_rgba(0,0,0,0.06)]">
+      <div className="flex items-center justify-start px-5 py-6">
+        <Image src="/images/ipdc-logo.png" alt="IPDC" width={150} height={74} className="h-12 w-auto object-contain" priority />
       </div>
 
-      {user && (
-        <div className="flex flex-col gap-2 border-b border-[#E5E7EB] px-4 py-4">
+      {user && !user.isAdmin && (
+        <div className="flex flex-col gap-2 border-t border-[#E5E7EB] px-5 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ipdc-pink text-sm font-semibold text-white">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#ED017F] text-sm font-semibold text-white">
               {getInitials(user.name)}
             </div>
             <div className="flex flex-col overflow-hidden">
               <p className="truncate text-sm font-semibold text-gray-800">{user.name}</p>
-              <p className="truncate text-xs text-gray-500">{user.designation ?? user.employeeId}</p>
+              <p className="truncate text-xs text-gray-400">{user.employeeId}</p>
             </div>
           </div>
-          <span className="inline-flex w-fit items-center rounded-full bg-ipdc-pink-light px-2.5 py-1 text-xs font-medium text-ipdc-pink">
-            {user.role.replace(/_/g, " ")}
+          <span className="inline-flex w-fit items-center rounded-full bg-[#FFE6F4] px-2.5 py-1 text-xs font-medium text-[#ED017F]">
+            {user.designation ?? user.role.replace(/_/g, " ")}
           </span>
         </div>
       )}
 
-      <div className="flex flex-1 flex-col overflow-y-auto py-4">
-        <p className="mb-2 px-4 text-xs font-medium uppercase tracking-wide text-gray-400">Report Categories</p>
-        <ul className="flex flex-col gap-1 px-2">
-          {navItems.map((item) => {
-            const isActive = pathname.startsWith(item.path);
+      <div className="flex flex-1 flex-col gap-1 border-t border-[#E5E7EB] py-4">
+        <p className="mb-1 px-5 text-[10px] font-medium uppercase tracking-widest text-gray-400">Main Menu</p>
+        <ul className="flex flex-col gap-1 px-3">
+          <li>
+            <Link
+              href="/dashboard"
+              className={cn(
+                "flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                pathname === "/dashboard" ? "bg-[#232B2B] text-white" : "text-gray-600 hover:bg-gray-100",
+              )}
+            >
+              <LayoutDashboard className="h-4 w-4 shrink-0" />
+              Dashboard
+            </Link>
+          </li>
+          {reportCategories.map((category) => {
+            const path = `/reports/${category.id}`;
+            const isActive = pathname.startsWith(path);
             return (
-              <li key={item.path}>
+              <li key={category.id}>
                 <Link
-                  href={item.path}
+                  href={path}
                   className={cn(
-                    "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                    isActive ? "bg-ipdc-pink text-white" : "text-gray-600 hover:bg-ipdc-pink-50 hover:text-ipdc-pink",
+                    "flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                    isActive ? "bg-[#232B2B] text-white" : "text-gray-600 hover:bg-gray-100",
                   )}
                 >
-                  <span className="text-base leading-none">{item.icon}</span>
-                  {item.label}
+                  <span className="text-base leading-none">{category.icon}</span>
+                  {category.label}
                 </Link>
               </li>
             );
           })}
         </ul>
+
+        {user?.isAdmin && (
+          <>
+            <div className="my-3 border-t border-[#E5E7EB]" />
+            <p className="mb-1 px-5 text-[10px] font-medium uppercase tracking-widest text-gray-400">Administration</p>
+            <div className="px-3">
+              <button
+                type="button"
+                onClick={() => setIsAdminOpen((open) => !open)}
+                className={cn(
+                  "flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                  isAdminSection ? "text-gray-800" : "text-gray-600 hover:bg-gray-100",
+                )}
+              >
+                <ShieldCheck className="h-4 w-4 shrink-0" />
+                <span className="flex-1 text-left">Administration</span>
+                <ChevronDown className={cn("h-4 w-4 shrink-0 transition-transform", isAdminOpen && "rotate-180")} />
+              </button>
+
+              {isAdminOpen && (
+                <ul className="mt-1 flex flex-col gap-1 pl-4">
+                  {ADMIN_SUB_ITEMS.map((item) => {
+                    const isActive = pathname === item.path;
+                    const Icon = item.icon;
+                    return (
+                      <li key={item.path}>
+                        <Link
+                          href={item.path}
+                          className={cn(
+                            "flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition-colors",
+                            isActive ? "bg-[#232B2B] text-white" : "text-gray-500 hover:bg-gray-100",
+                          )}
+                        >
+                          <Icon className="h-3.5 w-3.5 shrink-0" />
+                          {item.label}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+
+            <div className="my-3 border-t border-[#E5E7EB]" />
+            <div className="px-3">
+              <Link
+                href="/audit"
+                className={cn(
+                  "flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                  pathname.startsWith("/audit") ? "bg-[#232B2B] text-white" : "text-gray-600 hover:bg-gray-100",
+                )}
+              >
+                <ClipboardList className="h-4 w-4 shrink-0" />
+                Audit Log
+              </Link>
+            </div>
+          </>
+        )}
       </div>
 
-      <div className="border-t border-[#E5E7EB] p-2">
+      <div className="border-t border-[#E5E7EB] p-3">
         <button
           type="button"
           onClick={() => signOut({ callbackUrl: "/login" })}
-          className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-500 hover:text-red-500"
+          className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-400 transition-colors hover:text-red-400"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-4 w-4"
-          >
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-            <polyline points="16 17 21 12 16 7" />
-            <line x1="21" y1="12" x2="9" y2="12" />
-          </svg>
-          Sign out
+          <LogOut className="h-4 w-4 shrink-0" />
+          Sign Out
         </button>
       </div>
     </nav>

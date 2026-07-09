@@ -7,6 +7,7 @@ import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
+import { ArrowLeft, FileText, FileSpreadsheet, Check } from "lucide-react";
 import { getCategoryById, getReportById, REPORT_PARAM_FIELDS } from "@/config/reports.config";
 import type { ReportParamKey } from "@/config/reports.config";
 import { useReportAccess } from "@/hooks/useReportAccess";
@@ -35,9 +36,9 @@ function buildSchema(paramKeys: ReportParamKey[]) {
   return z.object(shape);
 }
 
-const FORMAT_OPTIONS: { value: ReportOutputFormat; label: string; icon: string }[] = [
-  { value: "PDF", label: "PDF Format", icon: "📄" },
-  { value: "XLS", label: "Excel Format", icon: "📊" },
+const FORMAT_OPTIONS: { value: ReportOutputFormat; label: string; icon: typeof FileText }[] = [
+  { value: "PDF", label: "PDF Format", icon: FileText },
+  { value: "XLS", label: "Excel Format", icon: FileSpreadsheet },
 ];
 
 export default function ReportParameterFormPage({
@@ -102,36 +103,41 @@ export default function ReportParameterFormPage({
   }
 
   return (
-    <div className="flex h-full flex-col gap-4">
-      <Breadcrumb
-        items={[
-          { label: "Dashboard", href: "/dashboard" },
-          { label: category.label, href: `/reports/${category.id}` },
-          { label: report.name },
-        ]}
-      />
-
-      <Link href={`/reports/${category.id}`} className="w-fit text-sm text-gray-500 hover:text-ipdc-pink">
-        ← Back to {category.label} Reports
-      </Link>
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center gap-3">
+        <Link
+          href={`/reports/${category.id}`}
+          aria-label={`Back to ${category.label} Reports`}
+          className="p-2 rounded-xl hover:bg-gray-100 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4 text-gray-500" />
+        </Link>
+        <Breadcrumb
+          items={[
+            { label: "Dashboard", href: "/dashboard" },
+            { label: category.label, href: `/reports/${category.id}` },
+            { label: report.name },
+          ]}
+        />
+      </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
           <div className="flex items-center gap-3">
             <h1 className="text-xl font-bold text-gray-800">{report.name}</h1>
-            <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
-              ID: {report.reportId}
+            <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
+              Report ID: {report.reportId}
             </span>
           </div>
           <div className="my-4 border-t border-gray-100" />
 
-          <h2 className="mb-4 text-sm font-semibold text-gray-600">Report Parameters</h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <h2 className="mb-4 text-sm font-semibold text-gray-500 uppercase tracking-wide">Report Parameters</h2>
+          <div className={cn("grid grid-cols-1 gap-4", report.params.length > 1 && "sm:grid-cols-2")}>
             {report.params.map((key) => {
               const field = REPORT_PARAM_FIELDS[key];
               return (
                 <div key={key} className="flex flex-col gap-1.5">
-                  <label htmlFor={key} className="text-sm font-medium text-gray-700">
+                  <label htmlFor={key} className="text-xs font-medium uppercase tracking-wide text-gray-500">
                     {field.label}
                   </label>
                   <input
@@ -139,7 +145,9 @@ export default function ReportParameterFormPage({
                     type={field.type}
                     placeholder={field.placeholder}
                     {...register(key)}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-ipdc-pink focus:ring-2 focus:ring-ipdc-pink"
+                    className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700
+                              outline-none focus:outline-none focus:ring-2 focus:ring-[#232B2B] focus:border-transparent
+                              placeholder:text-gray-300 transition-all duration-200"
                   />
                   {errors[key] && <p className="text-xs text-red-600">{errors[key]?.message}</p>}
                 </div>
@@ -148,27 +156,31 @@ export default function ReportParameterFormPage({
           </div>
         </div>
 
-        <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-sm font-semibold text-gray-600">Report Format</h2>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <h2 className="mb-4 text-sm font-semibold text-gray-500 uppercase tracking-wide">Select Format</h2>
           <div className="grid grid-cols-2 gap-4">
-            {FORMAT_OPTIONS.map((option) => (
-              <label
-                key={option.value}
-                className={cn(
-                  "flex cursor-pointer flex-col items-center gap-2 rounded-lg border p-4 text-center transition",
-                  selectedFormat === option.value
-                    ? "border-2 border-ipdc-pink bg-ipdc-pink-50"
-                    : "border-gray-200 hover:border-ipdc-pink",
-                )}
-              >
-                <input type="radio" value={option.value} className="sr-only" {...formatField} />
-                <span className="text-2xl">{option.icon}</span>
-                <span className="text-sm font-medium text-gray-700">{option.label}</span>
-                <span className="text-xs text-ipdc-pink">
-                  {selectedFormat === option.value ? "● Selected" : "○"}
-                </span>
-              </label>
-            ))}
+            {FORMAT_OPTIONS.map((option) => {
+              const isSelected = selectedFormat === option.value;
+              const Icon = option.icon;
+              return (
+                <label
+                  key={option.value}
+                  className={cn(
+                    "relative flex cursor-pointer flex-col items-center gap-2 rounded-xl p-4 text-center transition-all duration-200",
+                    isSelected ? "border-2 border-[#232B2B] bg-gray-50" : "border border-gray-200 hover:border-gray-300",
+                  )}
+                >
+                  <input type="radio" value={option.value} className="sr-only" {...formatField} />
+                  {isSelected && (
+                    <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#232B2B]">
+                      <Check className="h-3 w-3 text-white" />
+                    </span>
+                  )}
+                  <Icon className="h-6 w-6 text-gray-600" />
+                  <span className="text-sm font-medium text-gray-700">{option.label}</span>
+                </label>
+              );
+            })}
           </div>
         </div>
 
@@ -183,10 +195,12 @@ export default function ReportParameterFormPage({
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="inline-flex items-center gap-2 rounded-lg bg-ipdc-pink px-8 py-3 text-sm font-semibold text-white hover:bg-ipdc-pink-dark disabled:opacity-60"
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#232B2B] text-white text-sm
+                      font-semibold border border-transparent hover:bg-white hover:text-[#232B2B]
+                      hover:border-[#232B2B] transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
           >
             {mutation.isPending && (
-              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
             )}
             {mutation.isPending ? "Generating..." : "Generate Report"}
           </button>
@@ -197,14 +211,15 @@ export default function ReportParameterFormPage({
               setSelectedFormat("PDF");
               setStatus("idle");
             }}
-            className="ml-3 rounded-lg border border-gray-300 px-8 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50"
+            className="px-6 py-2.5 rounded-xl bg-white text-gray-700 text-sm font-medium border border-gray-200
+                      hover:border-gray-300 hover:bg-gray-50 transition-all duration-200"
           >
             Reset Input
           </button>
         </div>
       </form>
 
-      <footer className="mt-auto pt-6 text-xs text-gray-400">
+      <footer className="mt-8 text-center text-xs text-gray-400">
         © 2026 - Business Transformation, IPDC Finance Limited
       </footer>
     </div>

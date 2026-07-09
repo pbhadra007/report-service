@@ -3,6 +3,7 @@
 import { use, useMemo, useState } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Search } from "lucide-react";
 import { getCategoryById, getReportsByCategory } from "@/config/reports.config";
 import { useReportAccess } from "@/hooks/useReportAccess";
 import { Breadcrumb } from "@/components/common/Breadcrumb";
@@ -22,85 +23,81 @@ export default function ReportCategoryPage({ params }: ReportCategoryPageProps):
   }
 
   const accessibleReports = useMemo(
-    () =>
-      getReportsByCategory(category.id).filter(
-        (report) =>
-          accessibleReportIds.includes(report.reportId) &&
-          report.name.toLowerCase().includes(search.toLowerCase()),
-      ),
-    [category.id, accessibleReportIds, search],
+    () => getReportsByCategory(category.id).filter((report) => accessibleReportIds.includes(report.reportId)),
+    [category.id, accessibleReportIds],
+  );
+
+  const filteredReports = useMemo(
+    () => accessibleReports.filter((report) => report.name.toLowerCase().includes(search.toLowerCase())),
+    [accessibleReports, search],
   );
 
   return (
     <div className="flex flex-col gap-6">
       <Breadcrumb items={[{ label: "Dashboard", href: "/dashboard" }, { label: `${category.label} Reports` }]} />
 
-      <h1 className="flex items-center gap-2 text-xl font-semibold text-gray-800">
-        <span className="text-2xl">{category.icon}</span>
-        {category.label} Reports
-      </h1>
+      <div>
+        <h1 className="text-xl font-bold text-gray-800">{category.label} Reports</h1>
+        <p className="text-sm text-gray-400 mt-1">
+          {isLoading
+            ? "Loading…"
+            : `${accessibleReports.length} report${accessibleReports.length === 1 ? "" : "s"} available`}
+        </p>
+      </div>
 
-      <div className="relative max-w-md">
-        <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-4 w-4"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-        </span>
+      <div className="relative w-full">
+        <Search className="pointer-events-none absolute inset-y-0 left-4 my-auto h-4 w-4 text-gray-400" />
         <input
           type="text"
           placeholder="Search reports..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-3 text-sm outline-none focus:border-ipdc-pink focus:ring-2 focus:ring-ipdc-pink"
+          onChange={(event) => setSearch(event.target.value)}
+          className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-11 pr-4 text-sm text-gray-700
+                    outline-none focus:outline-none focus:ring-2 focus:ring-[#232B2B] focus:border-transparent
+                    placeholder:text-gray-300 transition-all duration-200"
         />
       </div>
 
-      {!isLoading && (
-        <p className="text-sm text-gray-500">
-          Showing {accessibleReports.length} report{accessibleReports.length === 1 ? "" : "s"}
-        </p>
-      )}
-
       {isLoading && <p className="text-sm text-gray-400">Loading reports...</p>}
 
-      {!isLoading && accessibleReports.length === 0 && (
-        <p className="text-sm text-gray-400">No reports available in this category.</p>
+      {!isLoading && filteredReports.length === 0 && (
+        <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-gray-100 bg-white p-12 text-center shadow-sm">
+          <Search className="h-8 w-8 text-gray-300" />
+          <p className="text-sm text-gray-400">
+            {search ? `No reports found for "${search}"` : "No reports available in this category."}
+          </p>
+        </div>
       )}
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {accessibleReports.map((report) => (
-          <div
-            key={report.reportId}
-            className="flex flex-col gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm transition hover:border-ipdc-pink hover:shadow-md"
-          >
-            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-ipdc-pink-50 text-lg text-ipdc-pink">
-              {category.icon}
-            </span>
-            <div>
-              <p className="font-semibold text-gray-800">{report.name}</p>
-              <p className="text-xs text-gray-400">Report ID: {report.reportId}</p>
-            </div>
-            <div className="border-t border-gray-100 pt-3">
+      {!isLoading && filteredReports.length > 0 && (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredReports.map((report) => (
+            <div
+              key={report.reportId}
+              className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5
+                        hover:shadow-md hover:border-[#ED017F]
+                        transition-all duration-200 group"
+            >
+              <div
+                className="w-10 h-10 rounded-xl bg-[#FFF0F9] flex items-center
+                          justify-center mb-3 group-hover:bg-[#ED017F] transition-colors"
+              >
+                <span className="text-lg leading-none">{category.icon}</span>
+              </div>
+              <h3 className="font-semibold text-gray-800 text-sm">{report.name}</h3>
+              <p className="text-xs text-gray-400 mt-0.5">Report ID: {report.reportId}</p>
               <Link
                 href={`/reports/${category.id}/${report.reportId}`}
-                className="flex w-full items-center justify-center rounded-lg bg-ipdc-pink py-2 text-sm font-medium text-white hover:bg-ipdc-pink-dark"
+                className="mt-4 flex w-full items-center justify-center py-2 rounded-xl bg-[#232B2B] text-white
+                          text-xs font-medium hover:bg-white hover:text-[#232B2B]
+                          hover:border hover:border-[#232B2B] transition-all duration-200"
               >
                 Generate Report →
               </Link>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
