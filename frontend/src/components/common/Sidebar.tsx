@@ -88,24 +88,25 @@ export function Sidebar(): React.JSX.Element {
               Dashboard
             </Link>
           </li>
-          {reportCategories.map((category) => {
-            const path = `/reports/${category.id}`;
-            const isActive = pathname.startsWith(path);
-            return (
-              <li key={category.id}>
-                <Link
-                  href={path}
-                  className={cn(
-                    "flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-                    isActive ? "bg-[#232B2B] text-white" : "text-gray-600 hover:bg-gray-100",
-                  )}
-                >
-                  <span className="text-base leading-none">{category.icon}</span>
-                  {category.label}
-                </Link>
-              </li>
-            );
-          })}
+          {!user?.isAdmin &&
+            reportCategories.map((category) => {
+              const path = `/reports/${category.id}`;
+              const isActive = pathname.startsWith(path);
+              return (
+                <li key={category.id}>
+                  <Link
+                    href={path}
+                    className={cn(
+                      "flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                      isActive ? "bg-[#232B2B] text-white" : "text-gray-600 hover:bg-gray-100",
+                    )}
+                  >
+                    <span className="text-base leading-none">{category.icon}</span>
+                    {category.label}
+                  </Link>
+                </li>
+              );
+            })}
         </ul>
 
         {user?.isAdmin && (
