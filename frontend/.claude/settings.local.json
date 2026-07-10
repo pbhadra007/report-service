@@ -62,7 +62,28 @@
       "Bash(powershell -NoProfile -Command \"Stop-Process -Id 23172 -Force\")",
       "Bash(taskkill //F //PID 23172)",
       "Bash(powershell -NoProfile -Command \"Get-NetTCPConnection -LocalPort 3000 -State Listen | Select-Object -ExpandProperty OwningProcess\")",
-      "Bash(node -e \"const i = require\\('lucide-react'\\); console.log\\(['CheckCircle2','Phone','Mail'].map\\(n => n + ': ' + \\(typeof i[n]\\)\\).join\\('\\\\n'\\)\\)\")"
+      "Bash(node -e \"const i = require\\('lucide-react'\\); console.log\\(['CheckCircle2','Phone','Mail'].map\\(n => n + ': ' + \\(typeof i[n]\\)\\).join\\('\\\\n'\\)\\)\")",
+      "Bash(npm start *)",
+      "Bash(powershell -Command \"Get-Process -Id 4108 | Select-Object Id,ProcessName,Path\")",
+      "Bash(powershell -Command \"Stop-Process -Id 4108 -Force\")",
+      "Bash(node -e ' *)",
+      "Bash(chromium-cli --help)",
+      "Bash(npx --no-install playwright --version)",
+      "Bash(npx -y -p playwright node -e \"console.log\\(require.resolve\\('playwright'\\)\\)\")",
+      "Bash(powershell -Command \"Get-Process -Id 1332 -ErrorAction SilentlyContinue | Select-Object Id,ProcessName,StartTime,Path\")",
+      "Bash(taskkill /PID 1332 /F)",
+      "Bash(powershell -Command \"Stop-Process -Id 1332 -Force\")",
+      "PowerShell(Get-NetTCPConnection *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "PowerShell(Start-Process \"http://localhost:3000\")",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(powershell -Command \"Stop-Process -Id 42472 -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 1; netstat -ano | findstr :3000\")",
+      "Bash(echo \"TSC_EXIT:$?\")",
+      "Bash(powershell -Command \"Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess\")",
+      "Bash(powershell -Command \"Stop-Process -Id 46188 -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 1; netstat -ano | findstr :3000\")",
+      "Bash(powershell -Command \"Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue\")"
     ]
   }
 }

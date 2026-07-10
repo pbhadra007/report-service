@@ -156,7 +156,7 @@ export default function AdminEditUserPage({ params }: AdminEditUserPageProps): R
         mobile: `+88${values.mobile}`,
         badAttempts: Number(values.badAttempts),
       }),
-    onSuccess: () => router.push("/admin"),
+    onSuccess: () => router.push("/admin/users"),
     onError: () => setStatus("error"),
   });
 
@@ -169,7 +169,7 @@ export default function AdminEditUserPage({ params }: AdminEditUserPageProps): R
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-3">
         <Link
-          href="/admin"
+          href="/admin/users"
           aria-label="Back to User Management"
           className="rounded-xl p-2 transition-colors hover:bg-gray-100"
         >
