@@ -201,7 +201,7 @@ function getPageNumbers(current: number, total: number): (number | "...")[] {
   return pages;
 }
 
-const ROWS_PER_PAGE_OPTIONS = [10, 25, 50];
+const ROWS_PER_PAGE_OPTIONS = [5, 10, 25, 50];
 
 function StatusPill({ status }: { status: BranchStatus }): React.JSX.Element {
   return (
@@ -422,7 +422,7 @@ export default function AdminBranchesPage(): React.JSX.Element {
   const [showAllRegions, setShowAllRegions] = useState(false);
   const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const totalBranches = BRANCHES.length;
   const activeCount = BRANCHES.filter((branch) => branch.status === "Active").length;
@@ -761,14 +761,13 @@ export default function AdminBranchesPage(): React.JSX.Element {
                     <th className="px-4 py-3 text-xs font-medium uppercase tracking-wide text-gray-400">Region</th>
                     <th className="px-4 py-3 text-xs font-medium uppercase tracking-wide text-gray-400">Manager</th>
                     <th className="px-4 py-3 text-xs font-medium uppercase tracking-wide text-gray-400">Status</th>
-                    <th className="px-4 py-3 text-xs font-medium uppercase tracking-wide text-gray-400">Last Audit</th>
                     <th className="px-4 py-3 text-xs font-medium uppercase tracking-wide text-gray-400">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {pageBranches.length === 0 && (
                     <tr>
-                      <td colSpan={8} className="px-4 py-6 text-center text-sm text-gray-400">
+                      <td colSpan={7} className="px-4 py-6 text-center text-sm text-gray-400">
                         No branches found.
                       </td>
                     </tr>
@@ -790,7 +789,6 @@ export default function AdminBranchesPage(): React.JSX.Element {
                       <td className="px-4 py-3">
                         <StatusPill status={branch.status} />
                       </td>
-                      <td className="px-4 py-3 text-xs text-gray-500">{branch.lastAudit}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-0.5">
                           <button

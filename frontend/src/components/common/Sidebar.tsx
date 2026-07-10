@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -26,6 +26,8 @@ import {
   FileSearch,
   LogOut,
   ChevronsDown,
+  ChevronLeft,
+  ChevronRight,
   MoreHorizontal,
   X,
 } from "lucide-react";
@@ -112,16 +114,17 @@ export function Sidebar(): React.JSX.Element {
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({ [ADMIN_NAV_GROUPS[0].label]: true });
   const [isMoreOpen, setIsMoreOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
-  useEffect(() => {
-    const activeGroup = ADMIN_NAV_GROUPS.find((group) =>
-      group.items.some((item) => isItemActive(pathname, item.path)),
-    );
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+    const activeGroup = ADMIN_NAV_GROUPS.find((group) => group.items.some((item) => isItemActive(pathname, item.path)));
     if (activeGroup) {
       setOpenGroups((prev) => ({ ...prev, [activeGroup.label]: true }));
     }
     setIsMoreOpen(false);
-  }, [pathname]);
+  }
 
   const reportCategories = REPORT_CATEGORIES.filter((category) =>
     getReportsByCategory(category.id).some((report) => accessibleReportIds.includes(report.reportId)),
@@ -145,140 +148,203 @@ export function Sidebar(): React.JSX.Element {
         })),
       ];
 
-  const navBody = (
-    <>
-      <ul className="flex flex-col gap-1 px-3">
-        <li>
-          <Link
-            href={dashboardPath}
-            onClick={() => setIsMoreOpen(false)}
-            className={cn(
-              "flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-              pathname === dashboardPath ? "bg-[#232B2B] text-white" : "text-gray-600 hover:bg-gray-100",
+  function renderNavBody(collapsed: boolean): React.JSX.Element {
+    return (
+      <>
+        <ul className={cn("flex flex-col gap-1", collapsed ? "px-2" : "px-3")}>
+          <li>
+            <Link
+              href={dashboardPath}
+              onClick={() => setIsMoreOpen(false)}
+              title={collapsed ? "Dashboard" : undefined}
+              className={cn(
+                "flex items-center gap-2.5 rounded-xl py-2.5 text-sm font-medium transition-colors",
+                collapsed ? "justify-center px-2" : "px-3",
+                pathname === dashboardPath ? "bg-[#232B2B] text-white" : "text-gray-600 hover:bg-gray-100",
+              )}
+            >
+              <LayoutDashboard className="h-4 w-4 shrink-0" />
+              {!collapsed && "Dashboard"}
+            </Link>
+          </li>
+          {!user?.isAdmin &&
+            reportCategories.map((category) => {
+              const path = `/reports/${category.id}`;
+              const isActive = pathname.startsWith(path);
+              return (
+                <li key={category.id}>
+                  <Link
+                    href={path}
+                    onClick={() => setIsMoreOpen(false)}
+                    title={collapsed ? category.label : undefined}
+                    className={cn(
+                      "flex items-center gap-2.5 rounded-xl py-2.5 text-sm font-medium transition-colors",
+                      collapsed ? "justify-center px-2" : "px-3",
+                      isActive ? "bg-[#232B2B] text-white" : "text-gray-600 hover:bg-gray-100",
+                    )}
+                  >
+                    <span className="text-base leading-none">{category.icon}</span>
+                    {!collapsed && category.label}
+                  </Link>
+                </li>
+              );
+            })}
+        </ul>
+
+        {user?.isAdmin && (
+          <>
+            <div className="mx-4 my-3 border-t border-gray-100" />
+
+            <div className={cn("flex items-center gap-2 py-2 mb-1", collapsed ? "justify-center px-2" : "px-4")}>
+              <Shield className="w-4 h-4 text-[#ED017F]" />
+              {!collapsed && <span className="text-sm font-bold text-gray-800">Administration</span>}
+            </div>
+
+            {collapsed ? (
+              <ul className="flex flex-col gap-1 px-2">
+                {ADMIN_NAV_GROUPS.flatMap((group) => group.items).map((item) => {
+                  const isActive = isItemActive(pathname, item.path);
+                  const Icon = item.icon;
+                  return (
+                    <li key={item.path}>
+                      <Link
+                        href={item.path}
+                        title={item.label}
+                        onClick={() => setIsMoreOpen(false)}
+                        className={cn(
+                          "flex items-center justify-center rounded-xl px-2 py-2.5 text-sm font-medium transition-all",
+                          isActive ? "bg-[#232B2B] text-white" : "text-gray-600 hover:bg-gray-100 hover:text-gray-800",
+                        )}
+                      >
+                        <Icon className="w-4 h-4 flex-shrink-0" />
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              ADMIN_NAV_GROUPS.map((group, index) => {
+                const isOpen = Boolean(openGroups[group.label]);
+                return (
+                  <div key={group.label}>
+                    {index > 0 && <div className="mx-4 my-3 border-t border-gray-100" />}
+                    <button
+                      type="button"
+                      onClick={() => setOpenGroups((prev) => ({ ...prev, [group.label]: !prev[group.label] }))}
+                      className="flex w-full items-center justify-between px-4 py-1 mb-1 text-xs font-semibold uppercase tracking-widest text-gray-400 transition-colors hover:text-gray-600"
+                    >
+                      <span>{group.label}</span>
+                      <ChevronsDown className={cn("h-3.5 w-3.5 shrink-0 transition-transform", isOpen && "rotate-180")} />
+                    </button>
+
+                    {isOpen && (
+                      <ul className="flex flex-col gap-1 px-1">
+                        {group.items.map((item) => {
+                          const isActive = isItemActive(pathname, item.path);
+                          const Icon = item.icon;
+                          return (
+                            <li key={item.path}>
+                              <Link
+                                href={item.path}
+                                onClick={() => setIsMoreOpen(false)}
+                                className={cn(
+                                  "flex items-center gap-3 px-3 py-2.5 mx-1 rounded-xl text-sm font-medium transition-all",
+                                  isActive
+                                    ? "bg-[#232B2B] text-white"
+                                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-800",
+                                )}
+                              >
+                                <Icon className="w-4 h-4 flex-shrink-0" />
+                                {item.label}
+                              </Link>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </div>
+                );
+              })
             )}
-          >
-            <LayoutDashboard className="h-4 w-4 shrink-0" />
-            Dashboard
-          </Link>
-        </li>
-        {!user?.isAdmin &&
-          reportCategories.map((category) => {
-            const path = `/reports/${category.id}`;
-            const isActive = pathname.startsWith(path);
-            return (
-              <li key={category.id}>
-                <Link
-                  href={path}
-                  onClick={() => setIsMoreOpen(false)}
-                  className={cn(
-                    "flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-                    isActive ? "bg-[#232B2B] text-white" : "text-gray-600 hover:bg-gray-100",
-                  )}
-                >
-                  <span className="text-base leading-none">{category.icon}</span>
-                  {category.label}
-                </Link>
-              </li>
-            );
-          })}
-      </ul>
+          </>
+        )}
+      </>
+    );
+  }
 
-      {user?.isAdmin && (
-        <>
-          <div className="mx-4 my-3 border-t border-gray-100" />
-
-          <div className="flex items-center gap-2 px-4 py-2 mb-1">
-            <Shield className="w-4 h-4 text-[#ED017F]" />
-            <span className="text-sm font-bold text-gray-800">Administration</span>
-          </div>
-
-          {ADMIN_NAV_GROUPS.map((group, index) => {
-            const isOpen = Boolean(openGroups[group.label]);
-            return (
-              <div key={group.label}>
-                {index > 0 && <div className="mx-4 my-3 border-t border-gray-100" />}
-                <button
-                  type="button"
-                  onClick={() => setOpenGroups((prev) => ({ ...prev, [group.label]: !prev[group.label] }))}
-                  className="flex w-full items-center justify-between px-4 py-1 mb-1 text-xs font-semibold uppercase tracking-widest text-gray-400 transition-colors hover:text-gray-600"
-                >
-                  <span>{group.label}</span>
-                  <ChevronsDown className={cn("h-3.5 w-3.5 shrink-0 transition-transform", isOpen && "rotate-180")} />
-                </button>
-
-                {isOpen && (
-                  <ul className="flex flex-col gap-1 px-1">
-                    {group.items.map((item) => {
-                      const isActive = isItemActive(pathname, item.path);
-                      const Icon = item.icon;
-                      return (
-                        <li key={item.path}>
-                          <Link
-                            href={item.path}
-                            onClick={() => setIsMoreOpen(false)}
-                            className={cn(
-                              "flex items-center gap-3 px-3 py-2.5 mx-1 rounded-xl text-sm font-medium transition-all",
-                              isActive
-                                ? "bg-[#232B2B] text-white"
-                                : "text-gray-600 hover:bg-gray-100 hover:text-gray-800",
-                            )}
-                          >
-                            <Icon className="w-4 h-4 flex-shrink-0" />
-                            {item.label}
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
-              </div>
-            );
-          })}
-        </>
-      )}
-    </>
-  );
-
-  const signOutButton = (
+  const signOutButton = (collapsed: boolean): React.JSX.Element => (
     <button
       type="button"
       onClick={() => signOut({ callbackUrl: "/login" })}
-      className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-400 transition-colors hover:text-red-400"
+      title={collapsed ? "Sign Out" : undefined}
+      className={cn(
+        "flex w-full items-center gap-2.5 rounded-xl py-2.5 text-sm font-medium text-gray-400 transition-colors hover:text-red-400",
+        collapsed ? "justify-center px-2" : "px-3",
+      )}
     >
       <LogOut className="h-4 w-4 shrink-0" />
-      Sign Out
+      {!collapsed && "Sign Out"}
     </button>
   );
 
   return (
     <>
       {/* Desktop sidebar */}
-      <nav className="hidden h-full w-[288px] shrink-0 flex-col overflow-y-auto border-r border-[#E5E7EB] bg-white shadow-[2px_0_8px_rgba(0,0,0,0.06)] lg:flex">
-        <div className="flex items-center justify-start px-5 py-6">
-          <Image src="/images/ipdc-logo.png" alt="IPDC" width={150} height={74} className="h-12 w-auto object-contain" priority />
-        </div>
-
-        {user && !user.isAdmin && (
-          <div className="flex flex-col gap-2 border-t border-[#E5E7EB] px-5 py-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#ED017F] text-sm font-semibold text-white">
-                {getInitials(user.name)}
-              </div>
-              <div className="flex flex-col overflow-hidden">
-                <p className="truncate text-sm font-semibold text-gray-800">{user.name}</p>
-                <p className="truncate text-xs text-gray-400">{user.employeeId}</p>
-              </div>
-            </div>
-            <span className="inline-flex w-fit items-center rounded-full bg-[#FFE6F4] px-2.5 py-1 text-xs font-medium text-[#ED017F]">
-              {user.designation ?? user.role.replace(/_/g, " ")}
-            </span>
-          </div>
+      <div
+        className={cn(
+          "relative hidden h-full shrink-0 transition-[width] duration-200 lg:flex",
+          isCollapsed ? "w-[76px]" : "w-[288px]",
         )}
+      >
+        <nav className="flex h-full w-full flex-col overflow-y-auto border-r border-[#E5E7EB] bg-white shadow-[2px_0_8px_rgba(0,0,0,0.06)]">
+          <div
+            className={cn(
+              "flex items-center py-6",
+              isCollapsed ? "justify-center px-2" : "justify-between px-5",
+            )}
+          >
+            {!isCollapsed && (
+              <Image src="/images/ipdc-logo.png" alt="IPDC" width={150} height={74} className="h-12 w-auto object-contain" priority />
+            )}
+            <button
+              type="button"
+              onClick={() => setIsCollapsed((prev) => !prev)}
+              aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-gray-400 shadow-sm transition-colors hover:text-gray-600"
+            >
+              {isCollapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronLeft className="h-3.5 w-3.5" />}
+            </button>
+          </div>
 
-        <div className="flex flex-1 flex-col gap-1 border-t border-[#E5E7EB] py-4">{navBody}</div>
+          {user && !user.isAdmin && (
+            <div className={cn("flex flex-col gap-2 border-t border-[#E5E7EB] py-4", isCollapsed ? "items-center px-2" : "px-5")}>
+              <div className={cn("flex items-center gap-3", isCollapsed && "flex-col gap-1")}>
+                <div
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#ED017F] text-sm font-semibold text-white"
+                  title={isCollapsed ? user.name : undefined}
+                >
+                  {getInitials(user.name)}
+                </div>
+                {!isCollapsed && (
+                  <div className="flex flex-col overflow-hidden">
+                    <p className="truncate text-sm font-semibold text-gray-800">{user.name}</p>
+                    <p className="truncate text-xs text-gray-400">{user.employeeId}</p>
+                  </div>
+                )}
+              </div>
+              {!isCollapsed && (
+                <span className="inline-flex w-fit items-center rounded-full bg-[#FFE6F4] px-2.5 py-1 text-xs font-medium text-[#ED017F]">
+                  {user.designation ?? user.role.replace(/_/g, " ")}
+                </span>
+              )}
+            </div>
+          )}
 
-        <div className="border-t border-[#E5E7EB] p-3">{signOutButton}</div>
-      </nav>
+          <div className="flex flex-1 flex-col gap-1 border-t border-[#E5E7EB] py-4">{renderNavBody(isCollapsed)}</div>
+
+          <div className={cn("border-t border-[#E5E7EB] p-3")}>{signOutButton(isCollapsed)}</div>
+        </nav>
+      </div>
 
       {/* Mobile bottom nav */}
       <nav
@@ -327,9 +393,9 @@ export function Sidebar(): React.JSX.Element {
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto py-4">{navBody}</div>
+            <div className="flex-1 overflow-y-auto py-4">{renderNavBody(false)}</div>
             <div className="border-t border-[#E5E7EB] p-3" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
-              {signOutButton}
+              {signOutButton(false)}
             </div>
           </div>
         </div>

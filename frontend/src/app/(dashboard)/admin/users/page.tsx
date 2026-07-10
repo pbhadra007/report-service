@@ -124,11 +124,39 @@ function SelectField({
   );
 }
 
-function StatCard({ value, label }: { value: number; label: string }): React.JSX.Element {
+function MiniSparkline({ points, color }: { points: number[]; color: string }): React.JSX.Element {
+  const width = 100;
+  const height = 28;
+  const max = Math.max(...points);
+  const min = Math.min(...points);
+  const range = max - min || 1;
+  const step = width / (points.length - 1 || 1);
+  const path = points
+    .map((point, index) => `${index === 0 ? "M" : "L"}${index * step},${height - ((point - min) / range) * height}`)
+    .join(" ");
+  return (
+    <svg viewBox={`0 0 ${width} ${height}`} className="mt-3 h-6 w-full" preserveAspectRatio="none">
+      <path d={path} fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function StatCard({
+  value,
+  label,
+  sparkline,
+  accent,
+}: {
+  value: number;
+  label: string;
+  sparkline: number[];
+  accent: string;
+}): React.JSX.Element {
   return (
     <div className="flex min-h-[100px] flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white p-6 text-center shadow-sm">
       <span className="text-3xl font-bold text-gray-900">{value}</span>
       <span className="mt-1 text-sm text-gray-500">{label}</span>
+      <MiniSparkline points={sparkline} color={accent} />
     </div>
   );
 }
@@ -359,9 +387,24 @@ export default function AdminUsersPage(): React.JSX.Element {
       </div>
 
       <div className="grid grid-cols-3 gap-4">
-        <StatCard value={users.length} label="Total Users" />
-        <StatCard value={users.filter((user) => user.status === "Active").length} label="Active Users" />
-        <StatCard value={users.filter((user) => user.status === "Locked").length} label="Locked Users" />
+        <StatCard
+          value={users.length}
+          label="Total Users"
+          sparkline={[7, 8, 8, 9, 9, users.length]}
+          accent="#232B2B"
+        />
+        <StatCard
+          value={users.filter((user) => user.status === "Active").length}
+          label="Active Users"
+          sparkline={[6, 6, 7, 7, 8, users.filter((user) => user.status === "Active").length]}
+          accent="#22C55E"
+        />
+        <StatCard
+          value={users.filter((user) => user.status === "Locked").length}
+          label="Locked Users"
+          sparkline={[0, 1, 1, 2, 1, users.filter((user) => user.status === "Locked").length]}
+          accent="#EF4444"
+        />
       </div>
 
       <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
