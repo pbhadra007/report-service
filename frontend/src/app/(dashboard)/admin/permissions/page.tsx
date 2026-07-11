@@ -209,7 +209,7 @@ const PERMISSION_TYPE_OPTIONS: PermissionType[] = ["System", "Custom"];
 const ENVIRONMENT_OPTIONS: Environment[] = ["Production", "Staging", "Development"];
 const STATUS_OPTIONS: PermissionStatus[] = ["Active", "Inactive", "Restricted"];
 const SORT_OPTIONS = ["Module (A-Z)", "Module (Z-A)", "Most Restricted First", "Most Active First"];
-const ROWS_PER_PAGE_OPTIONS = [25, 50, 100];
+const ROWS_PER_PAGE = 10;
 
 const STATUS_STYLES: Record<PermissionStatus, { dot: string; pill: string }> = {
   Active: { dot: "bg-green-500", pill: "border-green-200 bg-green-50 text-green-700" },
@@ -511,7 +511,6 @@ export default function AdminPermissionsPage(): React.JSX.Element {
   const [showAllModules, setShowAllModules] = useState(false);
   const [statusOverrides, setStatusOverrides] = useState<Record<string, PermissionStatus>>({});
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(25);
   const [drawerPermission, setDrawerPermission] = useState<PermissionEntry | null>(null);
 
   const totalPermissions = PERMISSIONS.length;
@@ -616,7 +615,6 @@ export default function AdminPermissionsPage(): React.JSX.Element {
     roleFilter,
     environmentFilter,
     sortBy,
-    rowsPerPage,
   ].join("|");
   const [prevFilterSignature, setPrevFilterSignature] = useState(filterSignature);
   if (filterSignature !== prevFilterSignature) {
@@ -624,10 +622,10 @@ export default function AdminPermissionsPage(): React.JSX.Element {
     setPage(1);
   }
 
-  const totalPages = Math.max(1, Math.ceil(filteredPermissions.length / rowsPerPage));
+  const totalPages = Math.max(1, Math.ceil(filteredPermissions.length / ROWS_PER_PAGE));
   const clampedPage = Math.min(page, totalPages);
-  const startIndex = (clampedPage - 1) * rowsPerPage;
-  const pagePermissions = filteredPermissions.slice(startIndex, startIndex + rowsPerPage);
+  const startIndex = (clampedPage - 1) * ROWS_PER_PAGE;
+  const pagePermissions = filteredPermissions.slice(startIndex, startIndex + ROWS_PER_PAGE);
   const pageNumbers = getPageNumbers(clampedPage, totalPages);
 
   const handleResetFilters = (): void => {
@@ -1208,7 +1206,7 @@ export default function AdminPermissionsPage(): React.JSX.Element {
 
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 px-5 py-4">
           <p className="text-sm text-gray-500">
-            Showing {filteredPermissions.length === 0 ? 0 : startIndex + 1}–{Math.min(startIndex + rowsPerPage, filteredPermissions.length)} of{" "}
+            Showing {filteredPermissions.length === 0 ? 0 : startIndex + 1}–{Math.min(startIndex + ROWS_PER_PAGE, filteredPermissions.length)} of{" "}
             {filteredPermissions.length} Permissions
           </p>
 
@@ -1248,24 +1246,6 @@ export default function AdminPermissionsPage(): React.JSX.Element {
             >
               <ChevronRight className="h-4 w-4" />
             </button>
-          </div>
-
-          <div className="flex items-center gap-2 text-sm text-gray-500">
-            <span>Rows Per Page</span>
-            <div className="relative">
-              <select
-                value={rowsPerPage}
-                onChange={(event) => setRowsPerPage(Number(event.target.value))}
-                className="appearance-none rounded-lg border border-gray-200 bg-white py-1.5 pl-3 pr-8 text-sm text-gray-700 outline-none focus:outline-none focus:ring-2 focus:ring-[#232B2B]"
-              >
-                {ROWS_PER_PAGE_OPTIONS.map((size) => (
-                  <option key={size} value={size}>
-                    {size}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
-            </div>
           </div>
         </div>
       </div>
