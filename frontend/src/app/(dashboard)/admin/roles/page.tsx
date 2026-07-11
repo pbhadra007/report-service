@@ -24,6 +24,8 @@ import {
   ArrowDown,
   SlidersHorizontal,
   FileSpreadsheet,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { ROLE_PERMISSIONS, type ReportAccessScope, type RolePermissions } from "@/config/roles.config";
 import type { Role } from "@/types";
@@ -108,6 +110,19 @@ const selectClass =
   "outline-none focus:outline-none focus:ring-2 focus:ring-[#232B2B] focus:border-transparent transition-all duration-200";
 const labelClass = "mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500";
 const actionButtonClass = "rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600";
+const ROWS_PER_PAGE = 10;
+
+function getPageNumbers(current: number, total: number): (number | "...")[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const pages: (number | "...")[] = [1];
+  if (current > 3) pages.push("...");
+  const start = Math.max(2, current - 1);
+  const end = Math.min(total - 1, current + 1);
+  for (let i = start; i <= end; i++) pages.push(i);
+  if (current < total - 2) pages.push("...");
+  pages.push(total);
+  return pages;
+}
 
 function formatRoleLabel(role: Role): string {
   return role
@@ -458,6 +473,7 @@ export default function AdminRolesPage(): React.JSX.Element {
   const [dashboardFilter, setDashboardFilter] = useState("");
   const [adminFilter, setAdminFilter] = useState("");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [page, setPage] = useState(1);
 
   const segments = useMemo<DonutSegment[]>(() => {
     const systemCount = ROLE_ENTRIES.filter(([, permissions]) => permissions.admin).length;
@@ -548,6 +564,21 @@ export default function AdminRolesPage(): React.JSX.Element {
     if (sortBy === "Fewest Users") sorted.sort((a, b) => ASSIGNED_USERS[a[0]] - ASSIGNED_USERS[b[0]]);
     return sorted;
   }, [search, statusFilter, roleTypeFilter, branchFilter, departmentFilter, dashboardFilter, adminFilter, sortBy]);
+
+  const filterSignature = [search, statusFilter, roleTypeFilter, branchFilter, departmentFilter, dashboardFilter, adminFilter, sortBy].join(
+    "|",
+  );
+  const [prevFilterSignature, setPrevFilterSignature] = useState(filterSignature);
+  if (filterSignature !== prevFilterSignature) {
+    setPrevFilterSignature(filterSignature);
+    setPage(1);
+  }
+
+  const totalPages = Math.max(1, Math.ceil(filteredRoles.length / ROWS_PER_PAGE));
+  const clampedPage = Math.min(page, totalPages);
+  const startIndex = (clampedPage - 1) * ROWS_PER_PAGE;
+  const pageRoles = filteredRoles.slice(startIndex, startIndex + ROWS_PER_PAGE);
+  const pageNumbers = getPageNumbers(clampedPage, totalPages);
 
   const handleResetFilters = (): void => {
     setSearch("");
@@ -816,7 +847,8 @@ export default function AdminRolesPage(): React.JSX.Element {
           <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
             <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">Role List</h2>
             <span className="text-xs text-gray-400">
-              Showing {filteredRoles.length} of {ROLE_ENTRIES.length} roles
+              Showing {filteredRoles.length === 0 ? 0 : startIndex + 1}–{Math.min(startIndex + ROWS_PER_PAGE, filteredRoles.length)} of{" "}
+              {filteredRoles.length} roles
             </span>
           </div>
 
@@ -842,14 +874,14 @@ export default function AdminRolesPage(): React.JSX.Element {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredRoles.length === 0 && (
+                  {pageRoles.length === 0 && (
                     <tr>
                       <td colSpan={7} className="px-4 py-6 text-center text-sm text-gray-400">
                         No roles found.
                       </td>
                     </tr>
                   )}
-                  {filteredRoles.map(([role, permissions], index) => (
+                  {pageRoles.map(([role, permissions], index) => (
                     <tr key={role} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                       <td className="px-4 py-3">
                         <input
@@ -886,8 +918,8 @@ export default function AdminRolesPage(): React.JSX.Element {
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
-              {filteredRoles.length === 0 && <p className="col-span-full py-6 text-center text-sm text-gray-400">No roles found.</p>}
-              {filteredRoles.map(([role, permissions]) => (
+              {pageRoles.length === 0 && <p className="col-span-full py-6 text-center text-sm text-gray-400">No roles found.</p>}
+              {pageRoles.map(([role, permissions]) => (
                 <div key={role} className="flex flex-col gap-3 rounded-2xl border border-gray-100 p-5 shadow-sm">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2">
@@ -924,6 +956,44 @@ export default function AdminRolesPage(): React.JSX.Element {
               ))}
             </div>
           )}
+
+          <div className="flex items-center justify-center gap-1 border-t border-gray-100 px-5 py-4">
+            <button
+              type="button"
+              disabled={clampedPage === 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-40"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            {pageNumbers.map((pageNumber, index) =>
+              pageNumber === "..." ? (
+                <span key={`ellipsis-${index}`} className="px-2 text-sm text-gray-400">
+                  ...
+                </span>
+              ) : (
+                <button
+                  key={pageNumber}
+                  type="button"
+                  onClick={() => setPage(pageNumber)}
+                  className={cn(
+                    "h-8 w-8 rounded-lg text-sm font-medium transition-colors",
+                    pageNumber === clampedPage ? "bg-[#232B2B] text-white" : "text-gray-600 hover:bg-gray-100",
+                  )}
+                >
+                  {pageNumber}
+                </button>
+              ),
+            )}
+            <button
+              type="button"
+              disabled={clampedPage === totalPages}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-40"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
 
           <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 px-5 py-4">
             <div className="relative w-56">
