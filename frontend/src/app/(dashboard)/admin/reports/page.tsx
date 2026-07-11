@@ -3,9 +3,8 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { Search, ArrowRight, Plus, FileStack, FolderKanban, ChevronLeft, ChevronRight } from "lucide-react";
-import { REPORT_CATALOGUE, REPORT_CATEGORIES, getCategoryById, type ReportDefinition } from "@/config/reports.config";
+import { Search, Eye, Plus, FileStack, FolderKanban, ChevronLeft, ChevronRight } from "lucide-react";
+import { REPORT_CATALOGUE, REPORT_CATEGORIES, getCategoryById, type ReportCategoryId } from "@/config/reports.config";
 import { Breadcrumb } from "@/components/common/Breadcrumb";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +25,16 @@ const inputClass =
 const selectClass = cn(inputClass, "appearance-none cursor-pointer");
 const labelClass = "mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500";
 
-const columnHelper = createColumnHelper<ReportDefinition>();
+const CATEGORY_STYLES: Record<ReportCategoryId, string> = {
+  loan: "bg-amber-50 text-amber-700",
+  treasury: "bg-blue-50 text-blue-700",
+  deposit: "bg-emerald-50 text-emerald-700",
+  other: "bg-gray-100 text-gray-600",
+  finance: "bg-purple-50 text-purple-700",
+  "balance-certificate": "bg-rose-50 text-rose-700",
+  summary: "bg-indigo-50 text-indigo-700",
+  crb: "bg-cyan-50 text-cyan-700",
+};
 
 function MiniSparkline({ points, color }: { points: number[]; color: string }): React.JSX.Element {
   const width = 100;
@@ -87,7 +95,8 @@ function SummaryCard({ icon: Icon, label, value, caption, sparkline, accent }: S
 }
 
 export default function AdminReportManagementPage(): React.JSX.Element {
-  const [search, setSearch] = useState("");
+  const [searchId, setSearchId] = useState("");
+  const [searchName, setSearchName] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [page, setPage] = useState(1);
@@ -112,60 +121,17 @@ export default function AdminReportManagementPage(): React.JSX.Element {
   ];
 
   const filteredReports = useMemo(() => {
-    const query = search.trim().toLowerCase();
+    const idQuery = searchId.trim().toLowerCase();
+    const nameQuery = searchName.trim().toLowerCase();
     return REPORT_CATALOGUE.filter((report) => {
       const matchesCategory = !categoryFilter || report.category === categoryFilter;
-      const matchesSearch =
-        !query || report.name.toLowerCase().includes(query) || String(report.reportId).includes(query);
-      return matchesCategory && matchesSearch;
+      const matchesId = !idQuery || String(report.reportId).toLowerCase().includes(idQuery);
+      const matchesName = !nameQuery || report.name.toLowerCase().includes(nameQuery);
+      return matchesCategory && matchesId && matchesName;
     });
-  }, [search, categoryFilter]);
+  }, [searchId, searchName, categoryFilter]);
 
-  const columns = useMemo(
-    () => [
-      columnHelper.accessor("reportId", {
-        header: "Report ID",
-        cell: (info) => <span className="text-gray-500">#{info.getValue()}</span>,
-      }),
-      columnHelper.accessor("name", {
-        header: "Report Name",
-        cell: (info) => <span className="font-medium text-gray-800">{info.getValue()}</span>,
-      }),
-      columnHelper.accessor("category", {
-        header: "Category",
-        cell: (info) => {
-          const category = getCategoryById(info.getValue());
-          return (
-            <span className="inline-flex items-center gap-1.5 text-gray-600">
-              <span className="text-base leading-none">{category?.icon}</span>
-              {category?.label ?? info.getValue()}
-            </span>
-          );
-        },
-      }),
-      columnHelper.display({
-        id: "lastGenerated",
-        header: "Last Generated",
-        cell: (info) => <span className="text-gray-500">{getLastGeneratedDate(info.row.original.reportId)}</span>,
-      }),
-      columnHelper.display({
-        id: "actions",
-        header: "Actions",
-        cell: (info) => (
-          <Link
-            href={`/reports/${info.row.original.category}/${info.row.original.reportId}`}
-            className="inline-flex items-center gap-1 text-xs font-medium text-[#ED017F] hover:underline"
-          >
-            View
-            <ArrowRight className="h-3 w-3" />
-          </Link>
-        ),
-      }),
-    ],
-    [],
-  );
-
-  const filterSignature = `${search}|${categoryFilter}`;
+  const filterSignature = `${searchId}|${searchName}|${categoryFilter}`;
   const [prevFilterSignature, setPrevFilterSignature] = useState(filterSignature);
   if (filterSignature !== prevFilterSignature) {
     setPrevFilterSignature(filterSignature);
@@ -177,12 +143,6 @@ export default function AdminReportManagementPage(): React.JSX.Element {
   const startIndex = (clampedPage - 1) * ROWS_PER_PAGE;
   const pageReports = filteredReports.slice(startIndex, startIndex + ROWS_PER_PAGE);
   const pageNumbers = getPageNumbers(clampedPage, totalPages);
-
-  const table = useReactTable({
-    data: pageReports,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
 
   return (
     <div className="flex flex-col gap-6">
@@ -217,18 +177,37 @@ export default function AdminReportManagementPage(): React.JSX.Element {
 
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="sm:col-span-2">
-            <label htmlFor="search" className={labelClass}>
-              Search
+          <div>
+            <label htmlFor="searchId" className={labelClass}>
+              Report ID
             </label>
             <div className="relative">
               <Search className="pointer-events-none absolute inset-y-0 left-3.5 my-auto h-4 w-4 text-gray-400" />
               <input
-                id="search"
+                id="searchId"
                 type="text"
-                placeholder="Search by report name or ID..."
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Search by report ID..."
+                value={searchId}
+                onChange={(event) => setSearchId(event.target.value)}
+                className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-700
+                          outline-none focus:outline-none focus:ring-2 focus:ring-[#232B2B] focus:border-transparent
+                          placeholder:text-gray-300 transition-all duration-200"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="searchName" className={labelClass}>
+              Report Name
+            </label>
+            <div className="relative">
+              <Search className="pointer-events-none absolute inset-y-0 left-3.5 my-auto h-4 w-4 text-gray-400" />
+              <input
+                id="searchName"
+                type="text"
+                placeholder="Search by report name..."
+                value={searchName}
+                onChange={(event) => setSearchName(event.target.value)}
                 className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-700
                           outline-none focus:outline-none focus:ring-2 focus:ring-[#232B2B] focus:border-transparent
                           placeholder:text-gray-300 transition-all duration-200"
@@ -238,7 +217,7 @@ export default function AdminReportManagementPage(): React.JSX.Element {
 
           <div>
             <label htmlFor="categoryFilter" className={labelClass}>
-              Category
+              Report Type
             </label>
             <select
               id="categoryFilter"
@@ -246,7 +225,7 @@ export default function AdminReportManagementPage(): React.JSX.Element {
               value={categoryFilter}
               onChange={(event) => setCategoryFilter(event.target.value)}
             >
-              <option value="">All categories</option>
+              <option value="">All report types</option>
               {REPORT_CATEGORIES.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.label}
@@ -260,30 +239,45 @@ export default function AdminReportManagementPage(): React.JSX.Element {
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-gray-100 bg-white">
-                {table.getFlatHeaders().map((header) => (
-                  <th key={header.id} className="px-4 py-3 text-xs font-medium uppercase tracking-wide text-gray-400">
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                  </th>
-                ))}
+                <th className="px-4 py-3 text-xs font-medium uppercase tracking-wide text-gray-400">Report ID</th>
+                <th className="px-4 py-3 text-xs font-medium uppercase tracking-wide text-gray-400">Report Name</th>
+                <th className="px-4 py-3 text-xs font-medium uppercase tracking-wide text-gray-400">Category</th>
+                <th className="px-4 py-3 text-xs font-medium uppercase tracking-wide text-gray-400">Last Generated</th>
+                <th className="px-4 py-3 text-xs font-medium uppercase tracking-wide text-gray-400">Actions</th>
               </tr>
             </thead>
             <tbody>
               {pageReports.length === 0 && (
                 <tr>
-                  <td colSpan={columns.length} className="px-4 py-6 text-center text-sm text-gray-400">
+                  <td colSpan={5} className="px-4 py-6 text-center text-sm text-gray-400">
                     No reports found.
                   </td>
                 </tr>
               )}
-              {table.getRowModel().rows.map((row, index) => (
-                <tr key={row.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-4 py-3 text-gray-700">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              {pageReports.map((report, index) => {
+                const category = getCategoryById(report.category);
+                return (
+                  <tr key={report.reportId} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                    <td className="px-4 py-3 text-gray-500">#{report.reportId}</td>
+                    <td className="px-4 py-3 font-medium text-gray-800">{report.name}</td>
+                    <td className="px-4 py-3">
+                      <span className={cn("inline-flex rounded-full px-2.5 py-1 text-xs font-medium", CATEGORY_STYLES[report.category])}>
+                        {category?.label ?? report.category}
+                      </span>
                     </td>
-                  ))}
-                </tr>
-              ))}
+                    <td className="px-4 py-3 text-gray-500">{getLastGeneratedDate(report.reportId)}</td>
+                    <td className="px-4 py-3">
+                      <Link
+                        href={`/reports/${report.category}/${report.reportId}`}
+                        aria-label={`View ${report.name}`}
+                        className="inline-flex rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-[#ED017F]"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Link>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
