@@ -83,7 +83,21 @@
       "Bash(echo \"TSC_EXIT:$?\")",
       "Bash(powershell -Command \"Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess\")",
       "Bash(powershell -Command \"Stop-Process -Id 46188 -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 1; netstat -ano | findstr :3000\")",
-      "Bash(powershell -Command \"Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue\")"
+      "Bash(powershell -Command \"Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue\")",
+      "Bash(chromium-cli *)",
+      "Bash(npx --no-install playwright screenshot --browser chromium http://localhost:3000 \"C:/Users/PRABAL~1.BHA/AppData/Local/Temp/claude/D--IPDC---Office-Work-new-development-report-server-frontend/35c436fd-26ec-4a7d-8051-0201b5dce90f/scratchpad/home.png\")",
+      "Bash(taskkill *)",
+      "Bash(node -e \"console.log\\('next:', require\\('./node_modules/next/package.json'\\).version\\); console.log\\('next-auth:', require\\('./node_modules/next-auth/package.json'\\).version\\)\")",
+      "Bash(python3 -m json.tool)",
+      "Bash(tasklist *)",
+      "PowerShell(Get-CimInstance *)",
+      "Bash(awk '{print $7}')",
+      "PowerShell(Start-Process \"http://localhost:3000/admin/audit\")",
+      "PowerShell(Start-Process \"http://localhost:3000/admin/login-history\")",
+      "Bash(NODE_PATH=\"/c/Users/prabal.bhadra/AppData/Local/npm-cache/_npx/e41f203b7505f1fb/node_modules\" node -e \"console.log\\(require.resolve\\('playwright', {paths: [process.env.NODE_PATH]}\\)\\)\")",
+      "Bash(NODE_PATH=\"/c/Users/prabal.bhadra/AppData/Local/npm-cache/_npx/e41f203b7505f1fb/node_modules\" node audit-log-flow-check.js)",
+      "Bash(NODE_PATH=/c/Users/prabal.bhadra/AppData/Local/npm-cache/_npx/e41f203b7505f1fb/node_modules node -e ' *)",
+      "Bash(env)"
     ]
   }
 }

@@ -4,7 +4,6 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
 import {
   LayoutDashboard,
   Shield,
@@ -20,11 +19,7 @@ import {
   Bell,
   ShieldCheck,
   History,
-  MonitorSmartphone,
   ScrollText,
-  Activity,
-  FileSearch,
-  LogOut,
   ChevronsDown,
   ChevronLeft,
   ChevronRight,
@@ -84,15 +79,12 @@ const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
     items: [
       { path: "/admin/password-policy", label: "Password Policy", icon: ShieldCheck },
       { path: "/admin/login-history", label: "Login History", icon: History },
-      { path: "/admin/sessions", label: "Session Management", icon: MonitorSmartphone },
     ],
   },
   {
     label: "Logs",
     items: [
       { path: "/admin/audit", label: "Audit Logs", icon: ScrollText },
-      { path: "/admin/user-activity", label: "User Activity Report", icon: Activity },
-      { path: "/admin/access-report", label: "Access Report", icon: FileSearch },
     ],
   },
 ];
@@ -272,21 +264,6 @@ export function Sidebar(): React.JSX.Element {
     );
   }
 
-  const signOutButton = (collapsed: boolean): React.JSX.Element => (
-    <button
-      type="button"
-      onClick={() => signOut({ callbackUrl: "/login" })}
-      title={collapsed ? "Sign Out" : undefined}
-      className={cn(
-        "flex w-full items-center gap-2.5 rounded-xl py-2.5 text-sm font-medium text-gray-400 transition-colors hover:text-red-400",
-        collapsed ? "justify-center px-2" : "px-3",
-      )}
-    >
-      <LogOut className="h-4 w-4 shrink-0" />
-      {!collapsed && "Sign Out"}
-    </button>
-  );
-
   return (
     <>
       {/* Desktop sidebar */}
@@ -341,8 +318,6 @@ export function Sidebar(): React.JSX.Element {
           )}
 
           <div className="flex flex-1 flex-col gap-1 border-t border-[#E5E7EB] py-4">{renderNavBody(isCollapsed)}</div>
-
-          <div className={cn("border-t border-[#E5E7EB] p-3")}>{signOutButton(isCollapsed)}</div>
         </nav>
       </div>
 
@@ -393,9 +368,8 @@ export function Sidebar(): React.JSX.Element {
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto py-4">{renderNavBody(false)}</div>
-            <div className="border-t border-[#E5E7EB] p-3" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
-              {signOutButton(false)}
+            <div className="flex-1 overflow-y-auto py-4" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
+              {renderNavBody(false)}
             </div>
           </div>
         </div>

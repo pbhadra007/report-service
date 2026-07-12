@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { Search, Eye, Plus, FileStack, FolderKanban, ChevronLeft, ChevronRight } from "lucide-react";
 import { REPORT_CATALOGUE, REPORT_CATEGORIES, getCategoryById, type ReportCategoryId } from "@/config/reports.config";
 import { Breadcrumb } from "@/components/common/Breadcrumb";
+import { CustomSelect } from "@/components/common/CustomSelect";
 import { cn } from "@/lib/utils";
 
 const ROWS_PER_PAGE = 10;
@@ -22,7 +23,6 @@ const inputClass =
   "w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 outline-none " +
   "focus:outline-none focus:ring-2 focus:ring-[#232B2B] focus:border-transparent placeholder:text-gray-300 " +
   "transition-all duration-200";
-const selectClass = cn(inputClass, "appearance-none cursor-pointer");
 const labelClass = "mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500";
 
 const CATEGORY_STYLES: Record<ReportCategoryId, string> = {
@@ -158,9 +158,9 @@ export default function AdminReportManagementPage(): React.JSX.Element {
         <button
           type="button"
           onClick={() => setActionMessage("Adding new reports isn't supported yet — the catalogue is a fixed system list.")}
-          className="inline-flex items-center gap-2 rounded-xl border border-transparent bg-[#232B2B] px-6 py-2.5
-                    text-sm font-semibold text-white transition-all duration-200 hover:border-[#232B2B]
-                    hover:bg-white hover:text-[#232B2B]"
+          className="inline-flex items-center gap-2 rounded-full border border-[#ED017F] bg-[#ED017F] px-6 py-2.5
+                    text-sm font-semibold text-white transition-all duration-200
+                    hover:bg-white hover:text-[#ED017F]"
         >
           <Plus className="h-4 w-4" />
           Add New Report
@@ -219,19 +219,13 @@ export default function AdminReportManagementPage(): React.JSX.Element {
             <label htmlFor="categoryFilter" className={labelClass}>
               Report Type
             </label>
-            <select
+            <CustomSelect
               id="categoryFilter"
-              className={selectClass}
               value={categoryFilter}
-              onChange={(event) => setCategoryFilter(event.target.value)}
-            >
-              <option value="">All report types</option>
-              {REPORT_CATEGORIES.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.label}
-                </option>
-              ))}
-            </select>
+              onChange={setCategoryFilter}
+              placeholder="All report types"
+              options={REPORT_CATEGORIES.map((category) => ({ value: category.id, label: category.label }))}
+            />
           </div>
         </div>
 
@@ -293,7 +287,7 @@ export default function AdminReportManagementPage(): React.JSX.Element {
               type="button"
               disabled={clampedPage === 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-40"
+              className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-40"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -308,8 +302,8 @@ export default function AdminReportManagementPage(): React.JSX.Element {
                   type="button"
                   onClick={() => setPage(pageNumber)}
                   className={cn(
-                    "h-8 w-8 rounded-lg text-sm font-medium transition-colors",
-                    pageNumber === clampedPage ? "bg-[#232B2B] text-white" : "text-gray-600 hover:bg-gray-100",
+                    "h-8 w-8 rounded-full text-sm font-medium transition-colors",
+                    pageNumber === clampedPage ? "bg-[#ED017F] text-white" : "text-gray-600 hover:bg-gray-100",
                   )}
                 >
                   {pageNumber}
@@ -320,7 +314,7 @@ export default function AdminReportManagementPage(): React.JSX.Element {
               type="button"
               disabled={clampedPage === totalPages}
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-40"
+              className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-40"
             >
               <ChevronRight className="h-4 w-4" />
             </button>

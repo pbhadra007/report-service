@@ -8,7 +8,6 @@ import {
   Lock,
   Package,
   Plus,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Search,
@@ -31,7 +30,6 @@ import {
   History,
   MonitorSmartphone,
   Activity,
-  FileSearch,
   Download,
   Upload,
   LayoutDashboard,
@@ -41,6 +39,7 @@ import {
   Zap,
 } from "lucide-react";
 import type { Role } from "@/types";
+import { CustomSelect } from "@/components/common/CustomSelect";
 import { cn } from "@/lib/utils";
 
 type PermissionStatus = "Active" | "Inactive" | "Restricted";
@@ -80,7 +79,6 @@ const PERMISSION_MODULES = [
   "Login History",
   "Session Management",
   "User Activity Report",
-  "Access Report",
   "Export Center",
   "Import Center",
   "API Keys",
@@ -132,7 +130,6 @@ const MODULE_OWNER_ROLE: Record<string, Role> = {
   "Login History": "INTERNAL_AUDITOR",
   "Session Management": "IT_OPERATIONS",
   "User Activity Report": "INTERNAL_AUDITOR",
-  "Access Report": "COMPLIANCE_OFFICER",
   "Export Center": "CFO_FINANCE_HEAD",
   "Import Center": "IT_OPERATIONS",
   "API Keys": "IT_OPERATIONS",
@@ -159,7 +156,6 @@ const MODULE_ICON: Record<string, typeof KeyRound> = {
   "Login History": History,
   "Session Management": MonitorSmartphone,
   "User Activity Report": Activity,
-  "Access Report": FileSearch,
   "Export Center": Download,
   "Import Center": Upload,
   "API Keys": KeyRound,
@@ -228,9 +224,6 @@ const inputClass =
   "w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 outline-none " +
   "focus:outline-none focus:ring-2 focus:ring-[#232B2B] focus:border-transparent placeholder:text-gray-300 " +
   "transition-all duration-200";
-const selectClass =
-  "w-full appearance-none cursor-pointer rounded-xl border border-gray-200 bg-white py-2.5 pl-3 pr-9 text-sm text-gray-700 " +
-  "outline-none focus:outline-none focus:ring-2 focus:ring-[#232B2B] focus:border-transparent transition-all duration-200";
 const labelClass = "mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500";
 const panelHeaderClass = "border-b border-gray-100 px-5 py-4";
 const panelTitleClass = "text-xs font-semibold uppercase tracking-widest text-gray-500";
@@ -291,17 +284,7 @@ function SelectField({
       <label htmlFor={id} className={labelClass}>
         {label}
       </label>
-      <div className="relative">
-        <select id={id} className={selectClass} value={value} onChange={(event) => onChange(event.target.value)}>
-          <option value="">{placeholder ?? `All ${label.toLowerCase()}`}</option>
-          {options.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-      </div>
+      <CustomSelect id={id} value={value} onChange={onChange} options={options} placeholder={placeholder ?? `All ${label.toLowerCase()}`} />
     </div>
   );
 }
@@ -756,9 +739,9 @@ export default function AdminPermissionsPage(): React.JSX.Element {
           onClick={() =>
             setActionMessage("Creating custom permissions isn't supported yet — permissions are derived from the fixed role model.")
           }
-          className="inline-flex items-center gap-2 rounded-xl border border-transparent bg-[#232B2B] px-6 py-2.5
-                    text-sm font-semibold text-white transition-all duration-200 hover:border-[#232B2B]
-                    hover:bg-white hover:text-[#232B2B]"
+          className="inline-flex items-center gap-2 rounded-full border border-[#ED017F] bg-[#ED017F] px-6 py-2.5
+                    text-sm font-semibold text-white transition-all duration-200
+                    hover:bg-white hover:text-[#ED017F]"
         >
           <Plus className="h-4 w-4" />
           Create Permission
@@ -842,9 +825,9 @@ export default function AdminPermissionsPage(): React.JSX.Element {
                 type="button"
                 onClick={() => setShowAdvancedFilters((prev) => !prev)}
                 className={cn(
-                  "inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium transition-colors",
+                  "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors",
                   showAdvancedFilters
-                    ? "border-[#232B2B] bg-[#232B2B] text-white"
+                    ? "border-[#ED017F] bg-[#ED017F] text-white"
                     : "border-gray-200 text-gray-600 hover:bg-gray-50",
                 )}
               >
@@ -854,9 +837,9 @@ export default function AdminPermissionsPage(): React.JSX.Element {
               <button
                 type="button"
                 onClick={handleExportPermissions}
-                className="inline-flex items-center gap-2 rounded-xl border border-transparent bg-[#232B2B] px-5 py-2
-                          text-sm font-semibold text-white transition-all duration-200 hover:border-[#232B2B]
-                          hover:bg-white hover:text-[#232B2B]"
+                className="inline-flex items-center gap-2 rounded-full border border-[#ED017F] bg-[#ED017F] px-5 py-2
+                          text-sm font-semibold text-white transition-all duration-200
+                          hover:bg-white hover:text-[#ED017F]"
               >
                 <FileSpreadsheet className="h-4 w-4" />
                 Export Permissions
@@ -1215,7 +1198,7 @@ export default function AdminPermissionsPage(): React.JSX.Element {
               type="button"
               disabled={clampedPage === 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-40"
+              className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-40"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -1230,8 +1213,8 @@ export default function AdminPermissionsPage(): React.JSX.Element {
                   type="button"
                   onClick={() => setPage(pageNumber)}
                   className={cn(
-                    "h-8 w-8 rounded-lg text-sm font-medium transition-colors",
-                    pageNumber === clampedPage ? "bg-[#232B2B] text-white" : "text-gray-600 hover:bg-gray-100",
+                    "h-8 w-8 rounded-full text-sm font-medium transition-colors",
+                    pageNumber === clampedPage ? "bg-[#ED017F] text-white" : "text-gray-600 hover:bg-gray-100",
                   )}
                 >
                   {pageNumber}
@@ -1242,7 +1225,7 @@ export default function AdminPermissionsPage(): React.JSX.Element {
               type="button"
               disabled={clampedPage === totalPages}
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-40"
+              className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-40"
             >
               <ChevronRight className="h-4 w-4" />
             </button>

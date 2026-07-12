@@ -6,9 +6,17 @@ export interface ToggleProps {
   label: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
+  activeClassName?: string;
+  hideLabel?: boolean;
 }
 
-export function Toggle({ label, checked, onChange }: ToggleProps): React.JSX.Element {
+export function Toggle({
+  label,
+  checked,
+  onChange,
+  activeClassName = "bg-[#232B2B]",
+  hideLabel = false,
+}: ToggleProps): React.JSX.Element {
   return (
     <button
       type="button"
@@ -21,7 +29,7 @@ export function Toggle({ label, checked, onChange }: ToggleProps): React.JSX.Ele
       <span
         className={cn(
           "relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200",
-          checked ? "bg-[#232B2B]" : "bg-gray-200",
+          checked ? activeClassName : "bg-gray-200",
         )}
       >
         <span
@@ -31,7 +39,7 @@ export function Toggle({ label, checked, onChange }: ToggleProps): React.JSX.Ele
           )}
         />
       </span>
-      <span className="text-sm font-medium text-gray-700">{label}</span>
+      <span className={cn("text-sm font-medium text-gray-700", hideLabel && "sr-only")}>{label}</span>
     </button>
   );
 }

@@ -12,6 +12,7 @@ import { createAdminUser } from "@/features/admin/api";
 import { EMPLOYEE_TYPES, DEPARTMENTS, DESIGNATIONS, BRANCHES, COST_CENTERS } from "@/config/lookups.config";
 import { Toggle } from "@/components/common/Toggle";
 import { MultiSelect } from "@/components/common/MultiSelect";
+import { CustomSelect } from "@/components/common/CustomSelect";
 import { cn } from "@/lib/utils";
 
 const schema = z
@@ -59,7 +60,6 @@ const inputClass =
   "w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 outline-none " +
   "focus:outline-none focus:ring-2 focus:ring-[#232B2B] focus:border-transparent placeholder:text-gray-300 " +
   "transition-all duration-200";
-const selectClass = cn(inputClass, "appearance-none cursor-pointer");
 const labelClass = "mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500";
 
 export default function AdminCreateUserPage(): React.JSX.Element {
@@ -186,13 +186,11 @@ export default function AdminCreateUserPage(): React.JSX.Element {
               <label htmlFor="employeeType" className={labelClass}>
                 Employee Type *
               </label>
-              <select id="employeeType" {...register("employeeType")} className={selectClass}>
-                {EMPLOYEE_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
+              <Controller
+                control={control}
+                name="employeeType"
+                render={({ field }) => <CustomSelect id="employeeType" value={field.value} onChange={field.onChange} options={EMPLOYEE_TYPES} />}
+              />
             </div>
 
             <div>
@@ -251,14 +249,13 @@ export default function AdminCreateUserPage(): React.JSX.Element {
               <label htmlFor="department" className={labelClass}>
                 Department *
               </label>
-              <select id="department" {...register("department")} className={selectClass}>
-                <option value="">Select department</option>
-                {DEPARTMENTS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+              <Controller
+                control={control}
+                name="department"
+                render={({ field }) => (
+                  <CustomSelect id="department" value={field.value} onChange={field.onChange} options={DEPARTMENTS} placeholder="Select department" />
+                )}
+              />
               {errors.department && <p className="mt-1 text-xs text-red-600">{errors.department.message}</p>}
             </div>
 
@@ -266,14 +263,19 @@ export default function AdminCreateUserPage(): React.JSX.Element {
               <label htmlFor="designation" className={labelClass}>
                 Designation *
               </label>
-              <select id="designation" {...register("designation")} className={selectClass}>
-                <option value="">Select designation</option>
-                {DESIGNATIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+              <Controller
+                control={control}
+                name="designation"
+                render={({ field }) => (
+                  <CustomSelect
+                    id="designation"
+                    value={field.value}
+                    onChange={field.onChange}
+                    options={DESIGNATIONS}
+                    placeholder="Select designation"
+                  />
+                )}
+              />
               {errors.designation && <p className="mt-1 text-xs text-red-600">{errors.designation.message}</p>}
             </div>
 
@@ -324,17 +326,17 @@ export default function AdminCreateUserPage(): React.JSX.Element {
             <Controller
               control={control}
               name="passwordRemainSame"
-              render={({ field }) => <Toggle label="User Password Remain Same" checked={field.value} onChange={field.onChange} />}
+              render={({ field }) => <Toggle label="User Password Remain Same" checked={field.value} onChange={field.onChange} activeClassName="bg-[#ED017F]" />}
             />
             <Controller
               control={control}
               name="isAdmin"
-              render={({ field }) => <Toggle label="Admin" checked={field.value} onChange={field.onChange} />}
+              render={({ field }) => <Toggle label="Admin" checked={field.value} onChange={field.onChange} activeClassName="bg-[#ED017F]" />}
             />
             <Controller
               control={control}
               name="isSuperAdmin"
-              render={({ field }) => <Toggle label="Super Admin" checked={field.value} onChange={field.onChange} />}
+              render={({ field }) => <Toggle label="Super Admin" checked={field.value} onChange={field.onChange} activeClassName="bg-[#ED017F]" />}
             />
           </div>
         </div>
@@ -369,22 +371,22 @@ export default function AdminCreateUserPage(): React.JSX.Element {
             <Controller
               control={control}
               name="forcePassChange"
-              render={({ field }) => <Toggle label="Force Pass Change" checked={field.value} onChange={field.onChange} />}
+              render={({ field }) => <Toggle label="Force Pass Change" checked={field.value} onChange={field.onChange} activeClassName="bg-[#ED017F]" />}
             />
             <Controller
               control={control}
               name="checkExpiry"
-              render={({ field }) => <Toggle label="Check Expiry" checked={field.value} onChange={field.onChange} />}
+              render={({ field }) => <Toggle label="Check Expiry" checked={field.value} onChange={field.onChange} activeClassName="bg-[#ED017F]" />}
             />
             <Controller
               control={control}
               name="unlockUser"
-              render={({ field }) => <Toggle label="Unlock User" checked={field.value} onChange={field.onChange} />}
+              render={({ field }) => <Toggle label="Unlock User" checked={field.value} onChange={field.onChange} activeClassName="bg-[#ED017F]" />}
             />
             <Controller
               control={control}
               name="activeUser"
-              render={({ field }) => <Toggle label="Active User" checked={field.value} onChange={field.onChange} />}
+              render={({ field }) => <Toggle label="Active User" checked={field.value} onChange={field.onChange} activeClassName="bg-[#ED017F]" />}
             />
           </div>
         </div>
@@ -395,9 +397,9 @@ export default function AdminCreateUserPage(): React.JSX.Element {
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#232B2B] text-white text-sm
-                      font-semibold border border-transparent hover:bg-white hover:text-[#232B2B]
-                      hover:border-[#232B2B] transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#ED017F] text-white text-sm
+                      font-semibold border border-[#ED017F] hover:bg-white hover:text-[#ED017F]
+                      transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
           >
             {mutation.isPending && (
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />

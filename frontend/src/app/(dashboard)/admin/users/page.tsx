@@ -9,12 +9,12 @@ import {
   Eye,
   Pencil,
   MoreVertical,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Table2,
   LayoutGrid,
 } from "lucide-react";
+import { CustomSelect } from "@/components/common/CustomSelect";
 import { cn } from "@/lib/utils";
 
 type UserRole = "Admin" | "Manager" | "Editor" | "Analyst" | "Viewer";
@@ -46,7 +46,7 @@ const MOCK_USERS: MockUser[] = [
 const ROLES: UserRole[] = ["Admin", "Manager", "Editor", "Analyst", "Viewer"];
 const STATUSES: UserStatus[] = ["Active", "Locked", "Inactive"];
 const BRANCHES = Array.from(new Set(MOCK_USERS.map((user) => user.branch))).sort();
-const PAGE_SIZES = [10, 25, 50];
+const PAGE_SIZE = 10;
 const AVATAR_COLORS = ["#ED017F", "#232B2B", "#2563EB", "#059669", "#D97706", "#7C3AED"];
 
 const ROLE_BADGE_STYLES: Record<UserRole, string> = {
@@ -67,7 +67,6 @@ const inputClass =
   "w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 outline-none " +
   "focus:outline-none focus:ring-2 focus:ring-[#232B2B] focus:border-transparent placeholder:text-gray-300 " +
   "transition-all duration-200";
-const selectClass = cn(inputClass, "appearance-none cursor-pointer pr-9");
 const labelClass = "mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500";
 
 function getInitials(name: string): string {
@@ -109,17 +108,7 @@ function SelectField({
       <label htmlFor={id} className={labelClass}>
         {label}
       </label>
-      <div className="relative">
-        <select id={id} className={selectClass} value={value} onChange={(event) => onChange(event.target.value)}>
-          <option value="">All {label.toLowerCase()}</option>
-          {options.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-      </div>
+      <CustomSelect id={id} value={value} onChange={onChange} options={options} placeholder={`All ${label.toLowerCase()}`} />
     </div>
   );
 }
@@ -304,7 +293,6 @@ export default function AdminUsersPage(): React.JSX.Element {
   const [branchFilter, setBranchFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
   const [viewMode, setViewMode] = useState<"table" | "card">("table");
   const [actionMessage, setActionMessage] = useState<string | null>(null);
 
@@ -327,10 +315,10 @@ export default function AdminUsersPage(): React.JSX.Element {
     });
   }, [users, search, roleFilter, branchFilter, statusFilter]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / pageSize));
+  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / PAGE_SIZE));
   const clampedPage = Math.min(page, totalPages);
-  const startIndex = (clampedPage - 1) * pageSize;
-  const pageUsers = filteredUsers.slice(startIndex, startIndex + pageSize);
+  const startIndex = (clampedPage - 1) * PAGE_SIZE;
+  const pageUsers = filteredUsers.slice(startIndex, startIndex + PAGE_SIZE);
   const pageNumbers = getPageNumbers(clampedPage, totalPages);
 
   const handleAction = (action: UserAction, user: MockUser): void => {
@@ -377,9 +365,9 @@ export default function AdminUsersPage(): React.JSX.Element {
         </div>
         <Link
           href="/admin/users/new"
-          className="inline-flex items-center gap-2 rounded-xl border border-transparent bg-[#232B2B] px-6 py-2.5
-                    text-sm font-semibold text-white transition-all duration-200 hover:border-[#232B2B]
-                    hover:bg-white hover:text-[#232B2B]"
+          className="inline-flex items-center gap-2 rounded-full border border-[#ED017F] bg-[#ED017F] px-6 py-2.5
+                    text-sm font-semibold text-white transition-all duration-200
+                    hover:bg-white hover:text-[#ED017F]"
         >
           <UserPlus className="h-4 w-4" />
           Create User
@@ -444,9 +432,9 @@ export default function AdminUsersPage(): React.JSX.Element {
           <button
             type="button"
             onClick={handleExport}
-            className="inline-flex items-center gap-2 rounded-xl border border-transparent bg-[#232B2B] px-5 py-2
-                      text-sm font-semibold text-white transition-all duration-200 hover:border-[#232B2B]
-                      hover:bg-white hover:text-[#232B2B]"
+            className="inline-flex items-center gap-2 rounded-full border border-[#ED017F] bg-[#ED017F] px-5 py-2
+                      text-sm font-semibold text-white transition-all duration-200
+                      hover:bg-white hover:text-[#ED017F]"
           >
             Export Users
           </button>
@@ -457,16 +445,16 @@ export default function AdminUsersPage(): React.JSX.Element {
 
       <div className="flex items-center justify-between">
         <p className="text-sm text-gray-400">
-          Showing {filteredUsers.length === 0 ? 0 : startIndex + 1} to {Math.min(startIndex + pageSize, filteredUsers.length)} of{" "}
+          Showing {filteredUsers.length === 0 ? 0 : startIndex + 1} to {Math.min(startIndex + PAGE_SIZE, filteredUsers.length)} of{" "}
           {filteredUsers.length} users
         </p>
-        <div className="inline-flex rounded-xl border border-gray-200 bg-white p-1">
+        <div className="inline-flex rounded-full border border-gray-200 bg-white p-1">
           <button
             type="button"
             onClick={() => setViewMode("table")}
             className={cn(
-              "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
-              viewMode === "table" ? "bg-[#232B2B] text-white" : "text-gray-500 hover:bg-gray-100",
+              "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+              viewMode === "table" ? "bg-[#ED017F] text-white" : "text-gray-500 hover:bg-gray-100",
             )}
           >
             <Table2 className="h-3.5 w-3.5" />
@@ -476,8 +464,8 @@ export default function AdminUsersPage(): React.JSX.Element {
             type="button"
             onClick={() => setViewMode("card")}
             className={cn(
-              "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
-              viewMode === "card" ? "bg-[#232B2B] text-white" : "text-gray-500 hover:bg-gray-100",
+              "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+              viewMode === "card" ? "bg-[#ED017F] text-white" : "text-gray-500 hover:bg-gray-100",
             )}
           >
             <LayoutGrid className="h-3.5 w-3.5" />
@@ -603,36 +591,13 @@ export default function AdminUsersPage(): React.JSX.Element {
         </div>
       )}
 
-      <div className="flex items-center justify-between rounded-2xl border border-gray-100 bg-white px-4 py-3 shadow-sm">
-        <div className="flex items-center gap-2 text-sm text-gray-500">
-          <span>Show</span>
-          <div className="relative">
-            <select
-              value={pageSize}
-              onChange={(event) => {
-                setPageSize(Number(event.target.value));
-                setPage(1);
-              }}
-              className="appearance-none rounded-lg border border-gray-200 bg-white py-1.5 pl-3 pr-8 text-sm text-gray-700
-                        outline-none focus:outline-none focus:ring-2 focus:ring-[#232B2B]"
-            >
-              {PAGE_SIZES.map((size) => (
-                <option key={size} value={size}>
-                  {size}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
-          </div>
-          <span>entries</span>
-        </div>
-
+      <div className="flex items-center justify-center rounded-2xl border border-gray-100 bg-white px-4 py-3 shadow-sm">
         <div className="flex items-center gap-1">
           <button
             type="button"
             disabled={clampedPage === 1}
             onClick={() => setPage((p) => Math.max(1, p - 1))}
-            className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-40"
+            className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-40"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
@@ -647,8 +612,8 @@ export default function AdminUsersPage(): React.JSX.Element {
                 type="button"
                 onClick={() => setPage(pageNumber)}
                 className={cn(
-                  "h-8 w-8 rounded-lg text-sm font-medium transition-colors",
-                  pageNumber === clampedPage ? "bg-[#232B2B] text-white" : "text-gray-600 hover:bg-gray-100",
+                  "h-8 w-8 rounded-full text-sm font-medium transition-colors",
+                  pageNumber === clampedPage ? "bg-[#ED017F] text-white" : "text-gray-600 hover:bg-gray-100",
                 )}
               >
                 {pageNumber}
@@ -659,7 +624,7 @@ export default function AdminUsersPage(): React.JSX.Element {
             type="button"
             disabled={clampedPage === totalPages}
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-40"
+            className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-40"
           >
             <ChevronRight className="h-4 w-4" />
           </button>

@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { ROLE_PERMISSIONS, type ReportAccessScope, type RolePermissions } from "@/config/roles.config";
 import type { Role } from "@/types";
+import { CustomSelect } from "@/components/common/CustomSelect";
 import { cn } from "@/lib/utils";
 
 const ROLE_ENTRIES = Object.entries(ROLE_PERMISSIONS) as [Role, RolePermissions][];
@@ -165,17 +166,7 @@ function SelectField({
       <label htmlFor={id} className={labelClass}>
         {label}
       </label>
-      <div className="relative">
-        <select id={id} className={selectClass} value={value} onChange={(event) => onChange(event.target.value)}>
-          <option value="">{placeholder ?? `All ${label.toLowerCase()}`}</option>
-          {options.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-      </div>
+      <CustomSelect id={id} value={value} onChange={onChange} options={options} placeholder={placeholder ?? `All ${label.toLowerCase()}`} />
     </div>
   );
 }
@@ -675,9 +666,9 @@ export default function AdminRolesPage(): React.JSX.Element {
         <button
           type="button"
           onClick={() => setActionMessage("Creating custom roles isn't supported yet — roles are a fixed system list.")}
-          className="inline-flex items-center gap-2 rounded-xl border border-transparent bg-[#232B2B] px-6 py-2.5
-                    text-sm font-semibold text-white transition-all duration-200 hover:border-[#232B2B]
-                    hover:bg-white hover:text-[#232B2B]"
+          className="inline-flex items-center gap-2 rounded-full border border-[#ED017F] bg-[#ED017F] px-6 py-2.5
+                    text-sm font-semibold text-white transition-all duration-200
+                    hover:bg-white hover:text-[#ED017F]"
         >
           <Plus className="h-4 w-4" />
           Create Role
@@ -774,9 +765,9 @@ export default function AdminRolesPage(): React.JSX.Element {
                 type="button"
                 onClick={() => setShowAdvancedFilters((prev) => !prev)}
                 className={cn(
-                  "inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium transition-colors",
+                  "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors",
                   showAdvancedFilters
-                    ? "border-[#232B2B] bg-[#232B2B] text-white"
+                    ? "border-[#ED017F] bg-[#ED017F] text-white"
                     : "border-gray-200 text-gray-600 hover:bg-gray-50",
                 )}
               >
@@ -786,9 +777,9 @@ export default function AdminRolesPage(): React.JSX.Element {
               <button
                 type="button"
                 onClick={handleExportExcel}
-                className="inline-flex items-center gap-2 rounded-xl border border-transparent bg-[#232B2B] px-5 py-2
-                          text-sm font-semibold text-white transition-all duration-200 hover:border-[#232B2B]
-                          hover:bg-white hover:text-[#232B2B]"
+                className="inline-flex items-center gap-2 rounded-full border border-[#ED017F] bg-[#ED017F] px-5 py-2
+                          text-sm font-semibold text-white transition-all duration-200
+                          hover:bg-white hover:text-[#ED017F]"
               >
                 <FileSpreadsheet className="h-4 w-4" />
                 Export Excel
@@ -962,7 +953,7 @@ export default function AdminRolesPage(): React.JSX.Element {
               type="button"
               disabled={clampedPage === 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-40"
+              className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-40"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -977,8 +968,8 @@ export default function AdminRolesPage(): React.JSX.Element {
                   type="button"
                   onClick={() => setPage(pageNumber)}
                   className={cn(
-                    "h-8 w-8 rounded-lg text-sm font-medium transition-colors",
-                    pageNumber === clampedPage ? "bg-[#232B2B] text-white" : "text-gray-600 hover:bg-gray-100",
+                    "h-8 w-8 rounded-full text-sm font-medium transition-colors",
+                    pageNumber === clampedPage ? "bg-[#ED017F] text-white" : "text-gray-600 hover:bg-gray-100",
                   )}
                 >
                   {pageNumber}
@@ -989,7 +980,7 @@ export default function AdminRolesPage(): React.JSX.Element {
               type="button"
               disabled={clampedPage === totalPages}
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-40"
+              className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-40"
             >
               <ChevronRight className="h-4 w-4" />
             </button>

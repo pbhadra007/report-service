@@ -115,9 +115,9 @@ export default function AdminSettingsPage(): React.JSX.Element {
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#232B2B] text-white text-sm
-                      font-semibold border border-transparent hover:bg-white hover:text-[#232B2B]
-                      hover:border-[#232B2B] transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#ED017F] text-white text-sm
+                      font-semibold border border-[#ED017F] hover:bg-white hover:text-[#ED017F]
+                      transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
           >
             {mutation.isPending && (
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
