@@ -3,8 +3,9 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { Search, Eye, Plus, FileStack, FolderKanban, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Eye, FileStack, FolderKanban, ChevronLeft, ChevronRight } from "lucide-react";
 import { REPORT_CATALOGUE, REPORT_CATEGORIES, getCategoryById, type ReportCategoryId } from "@/config/reports.config";
+import { useReportAccess } from "@/hooks/useReportAccess";
 import { Breadcrumb } from "@/components/common/Breadcrumb";
 import { CustomSelect } from "@/components/common/CustomSelect";
 import { cn } from "@/lib/utils";
@@ -19,10 +20,6 @@ function getLastGeneratedDate(reportId: number): string {
   return format(date, "dd-MMM-yy");
 }
 
-const inputClass =
-  "w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 outline-none " +
-  "focus:outline-none focus:ring-2 focus:ring-[#232B2B] focus:border-transparent placeholder:text-gray-300 " +
-  "transition-all duration-200";
 const labelClass = "mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500";
 
 const CATEGORY_STYLES: Record<ReportCategoryId, string> = {
@@ -94,28 +91,38 @@ function SummaryCard({ icon: Icon, label, value, caption, sparkline, accent }: S
   );
 }
 
-export default function AdminReportManagementPage(): React.JSX.Element {
+export default function AllReportsPage(): React.JSX.Element {
   const [searchId, setSearchId] = useState("");
   const [searchName, setSearchName] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
-  const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const { accessibleReportIds, isLoading } = useReportAccess();
+
+  const accessibleReports = useMemo(
+    () => REPORT_CATALOGUE.filter((report) => accessibleReportIds.includes(report.reportId)),
+    [accessibleReportIds],
+  );
+
+  const accessibleCategoryCount = useMemo(
+    () => new Set(accessibleReports.map((report) => report.category)).size,
+    [accessibleReports],
+  );
 
   const summaryCards: SummaryCardData[] = [
     {
       icon: FileStack,
       label: "Total Reports",
-      value: REPORT_CATALOGUE.length,
-      caption: "All reports",
-      sparkline: [12, 14, 15, 17, 18, REPORT_CATALOGUE.length],
+      value: accessibleReports.length,
+      caption: "Available to you",
+      sparkline: [12, 14, 15, 17, 18, accessibleReports.length],
       accent: "#232B2B",
     },
     {
       icon: FolderKanban,
       label: "Report Categories",
-      value: REPORT_CATEGORIES.length,
-      caption: "Across the catalogue",
-      sparkline: [3, 3, 4, 4, 5, REPORT_CATEGORIES.length],
+      value: accessibleCategoryCount,
+      caption: "Across your access",
+      sparkline: [3, 3, 4, 4, 5, accessibleCategoryCount],
       accent: "#ED017F",
     },
   ];
@@ -123,13 +130,13 @@ export default function AdminReportManagementPage(): React.JSX.Element {
   const filteredReports = useMemo(() => {
     const idQuery = searchId.trim().toLowerCase();
     const nameQuery = searchName.trim().toLowerCase();
-    return REPORT_CATALOGUE.filter((report) => {
+    return accessibleReports.filter((report) => {
       const matchesCategory = !categoryFilter || report.category === categoryFilter;
       const matchesId = !idQuery || String(report.reportId).toLowerCase().includes(idQuery);
       const matchesName = !nameQuery || report.name.toLowerCase().includes(nameQuery);
       return matchesCategory && matchesId && matchesName;
     });
-  }, [searchId, searchName, categoryFilter]);
+  }, [accessibleReports, searchId, searchName, categoryFilter]);
 
   const filterSignature = `${searchId}|${searchName}|${categoryFilter}`;
   const [prevFilterSignature, setPrevFilterSignature] = useState(filterSignature);
@@ -146,28 +153,12 @@ export default function AdminReportManagementPage(): React.JSX.Element {
 
   return (
     <div className="flex flex-col gap-6">
-      <Breadcrumb items={[{ label: "Administration", href: "/admin/dashboard" }, { label: "Reports" }]} />
+      <Breadcrumb items={[{ label: "Dashboard", href: "/dashboard" }, { label: "All Reports" }]} />
 
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-gray-800">Report Management</h1>
-          <p className="text-sm text-gray-400">
-            {REPORT_CATALOGUE.length} reports across {REPORT_CATEGORIES.length} categories.
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => setActionMessage("Adding new reports isn't supported yet — the catalogue is a fixed system list.")}
-          className="inline-flex items-center gap-2 rounded-full border border-[#ED017F] bg-[#ED017F] px-6 py-2.5
-                    text-sm font-semibold text-white transition-all duration-200
-                    hover:bg-white hover:text-[#ED017F]"
-        >
-          <Plus className="h-4 w-4" />
-          Add New Report
-        </button>
+      <div>
+        <h1 className="text-xl font-bold text-gray-800">All Reports</h1>
+        <p className="text-sm text-gray-400">Browse and generate reports available to you</p>
       </div>
-
-      {actionMessage && <p className="text-sm font-medium text-gray-600">{actionMessage}</p>}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {summaryCards.map((card) => (
@@ -241,37 +232,45 @@ export default function AdminReportManagementPage(): React.JSX.Element {
               </tr>
             </thead>
             <tbody>
-              {pageReports.length === 0 && (
+              {isLoading && (
+                <tr>
+                  <td colSpan={5} className="px-4 py-6 text-center text-sm text-gray-400">
+                    Loading reports...
+                  </td>
+                </tr>
+              )}
+              {!isLoading && pageReports.length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-4 py-6 text-center text-sm text-gray-400">
                     No reports found.
                   </td>
                 </tr>
               )}
-              {pageReports.map((report, index) => {
-                const category = getCategoryById(report.category);
-                return (
-                  <tr key={report.reportId} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                    <td className="px-4 py-3 text-gray-500">#{report.reportId}</td>
-                    <td className="px-4 py-3 font-medium text-gray-800">{report.name}</td>
-                    <td className="px-4 py-3">
-                      <span className={cn("inline-flex rounded-full px-2.5 py-1 text-xs font-medium", CATEGORY_STYLES[report.category])}>
-                        {category?.label ?? report.category}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-gray-500">{getLastGeneratedDate(report.reportId)}</td>
-                    <td className="px-4 py-3">
-                      <Link
-                        href={`/reports/${report.category}/${report.reportId}`}
-                        aria-label={`View ${report.name}`}
-                        className="inline-flex rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-[#ED017F]"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Link>
-                    </td>
-                  </tr>
-                );
-              })}
+              {!isLoading &&
+                pageReports.map((report, index) => {
+                  const category = getCategoryById(report.category);
+                  return (
+                    <tr key={report.reportId} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                      <td className="px-4 py-3 text-gray-500">#{report.reportId}</td>
+                      <td className="px-4 py-3 font-medium text-gray-800">{report.name}</td>
+                      <td className="px-4 py-3">
+                        <span className={cn("inline-flex rounded-full px-2.5 py-1 text-xs font-medium", CATEGORY_STYLES[report.category])}>
+                          {category?.label ?? report.category}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-gray-500">{getLastGeneratedDate(report.reportId)}</td>
+                      <td className="px-4 py-3">
+                        <Link
+                          href={`/reports/${report.category}/${report.reportId}`}
+                          aria-label={`View ${report.name}`}
+                          className="inline-flex rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-[#ED017F]"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
         </div>

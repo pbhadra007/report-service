@@ -206,8 +206,6 @@ export default function ProfilePage(): React.JSX.Element {
           )}
         </div>
       )}
-
-      <footer className="text-center text-xs text-gray-400">© 2026 - Business Transformation, IPDC Finance Limited</footer>
     </div>
   );
 }

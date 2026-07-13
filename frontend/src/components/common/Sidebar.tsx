@@ -13,6 +13,7 @@ import {
   GitBranch,
   Building2,
   FileStack,
+  Activity,
   KeyRound,
   Settings2,
   Mail,
@@ -27,8 +28,6 @@ import {
   X,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useReportAccess } from "@/hooks/useReportAccess";
-import { REPORT_CATEGORIES, getReportsByCategory } from "@/config/reports.config";
 import { cn } from "@/lib/utils";
 
 interface AdminNavItem {
@@ -47,6 +46,12 @@ interface MobilePrimaryItem {
   label: string;
   icon: React.ReactNode;
 }
+
+const USER_NAV_ITEMS: AdminNavItem[] = [
+  { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { path: "/reports", label: "All Reports", icon: FileStack },
+  { path: "/reports/activity", label: "Activity Report", icon: Activity },
+];
 
 const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   {
@@ -99,10 +104,16 @@ function isItemActive(pathname: string, path: string): boolean {
   return pathname === path || pathname.startsWith(`${path}/`);
 }
 
+function isUserNavItemActive(pathname: string, path: string): boolean {
+  if (path === "/reports") {
+    return pathname === "/reports" || (pathname.startsWith("/reports/") && !pathname.startsWith("/reports/activity"));
+  }
+  return isItemActive(pathname, path);
+}
+
 export function Sidebar(): React.JSX.Element {
   const { user } = useAuth();
   const pathname = usePathname();
-  const { accessibleReportIds } = useReportAccess();
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({ [ADMIN_NAV_GROUPS[0].label]: true });
   const [isMoreOpen, setIsMoreOpen] = useState(false);
@@ -118,10 +129,6 @@ export function Sidebar(): React.JSX.Element {
     setIsMoreOpen(false);
   }
 
-  const reportCategories = REPORT_CATEGORIES.filter((category) =>
-    getReportsByCategory(category.id).some((report) => accessibleReportIds.includes(report.reportId)),
-  );
-
   const dashboardPath = user?.isAdmin ? "/admin/dashboard" : "/dashboard";
 
   const mobilePrimaryItems: MobilePrimaryItem[] = user?.isAdmin
@@ -131,56 +138,63 @@ export function Sidebar(): React.JSX.Element {
         { path: "/admin/reports", label: "Reports", icon: <FileStack className="h-5 w-5" /> },
         { path: "/admin/settings", label: "Settings", icon: <Settings2 className="h-5 w-5" /> },
       ]
-    : [
-        { path: "/dashboard", label: "Dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
-        ...reportCategories.slice(0, 3).map((category) => ({
-          path: `/reports/${category.id}`,
-          label: category.label,
-          icon: <span className="text-lg leading-none">{category.icon}</span>,
-        })),
-      ];
+    : USER_NAV_ITEMS.map((item) => ({
+        path: item.path,
+        label: item.label,
+        icon: <item.icon className="h-5 w-5" />,
+      }));
 
   function renderNavBody(collapsed: boolean): React.JSX.Element {
     return (
       <>
         <ul className={cn("flex flex-col gap-1", collapsed ? "px-2" : "px-3")}>
-          <li>
-            <Link
-              href={dashboardPath}
-              onClick={() => setIsMoreOpen(false)}
-              title={collapsed ? "Dashboard" : undefined}
-              className={cn(
-                "flex items-center gap-2.5 rounded-xl py-2.5 text-sm font-medium transition-colors",
-                collapsed ? "justify-center px-2" : "px-3",
-                pathname === dashboardPath ? "bg-[#232B2B] text-white" : "text-gray-600 hover:bg-gray-100",
-              )}
-            >
-              <LayoutDashboard className="h-4 w-4 shrink-0" />
-              {!collapsed && "Dashboard"}
-            </Link>
-          </li>
-          {!user?.isAdmin &&
-            reportCategories.map((category) => {
-              const path = `/reports/${category.id}`;
-              const isActive = pathname.startsWith(path);
-              return (
-                <li key={category.id}>
-                  <Link
-                    href={path}
-                    onClick={() => setIsMoreOpen(false)}
-                    title={collapsed ? category.label : undefined}
-                    className={cn(
-                      "flex items-center gap-2.5 rounded-xl py-2.5 text-sm font-medium transition-colors",
-                      collapsed ? "justify-center px-2" : "px-3",
-                      isActive ? "bg-[#232B2B] text-white" : "text-gray-600 hover:bg-gray-100",
-                    )}
-                  >
-                    <span className="text-base leading-none">{category.icon}</span>
-                    {!collapsed && category.label}
-                  </Link>
+          {user?.isAdmin ? (
+            <li>
+              <Link
+                href={dashboardPath}
+                onClick={() => setIsMoreOpen(false)}
+                title={collapsed ? "Dashboard" : undefined}
+                className={cn(
+                  "flex items-center gap-2.5 rounded-xl py-2.5 text-sm font-medium transition-colors",
+                  collapsed ? "justify-center px-2" : "px-3",
+                  pathname === dashboardPath ? "bg-[#232B2B] text-white" : "text-gray-600 hover:bg-gray-100",
+                )}
+              >
+                <LayoutDashboard className="h-4 w-4 shrink-0" />
+                {!collapsed && "Dashboard"}
+              </Link>
+            </li>
+          ) : (
+            <>
+              {!collapsed && (
+                <li className="px-2 pb-1 pt-1 text-xs font-semibold uppercase tracking-widest text-gray-400">
+                  Main Menu
                 </li>
-              );
-            })}
+              )}
+              {USER_NAV_ITEMS.map((item) => {
+                const isActive = isUserNavItemActive(pathname, item.path);
+                const Icon = item.icon;
+                return (
+                  <li key={item.path}>
+                    <Link
+                      href={item.path}
+                      onClick={() => setIsMoreOpen(false)}
+                      title={collapsed ? item.label : undefined}
+                      className={cn(
+                        collapsed
+                          ? "flex items-center justify-center rounded-xl px-2 py-2.5 text-sm font-medium transition-all"
+                          : "w-full flex items-center gap-3 px-3 py-2.5 mx-1 rounded-xl text-sm font-medium transition-all",
+                        isActive ? "bg-[#232B2B] text-white" : "text-gray-600 hover:bg-gray-100 hover:text-gray-800",
+                      )}
+                    >
+                      <Icon className="h-4 w-4 shrink-0" />
+                      {!collapsed && item.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </>
+          )}
         </ul>
 
         {user?.isAdmin && (
@@ -273,7 +287,7 @@ export function Sidebar(): React.JSX.Element {
           isCollapsed ? "w-[76px]" : "w-[288px]",
         )}
       >
-        <nav className="flex h-full w-full flex-col overflow-y-auto border-r border-[#E5E7EB] bg-white shadow-[2px_0_8px_rgba(0,0,0,0.06)]">
+        <nav className="relative z-10 flex h-full w-full flex-col overflow-y-auto bg-white shadow-[4px_0_24px_0_rgba(0,0,0,0.08)]">
           <div
             className={cn(
               "flex items-center py-6",
@@ -327,7 +341,7 @@ export function Sidebar(): React.JSX.Element {
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         {mobilePrimaryItems.map((item) => {
-          const isActive = isItemActive(pathname, item.path);
+          const isActive = isUserNavItemActive(pathname, item.path);
           return (
             <Link
               key={item.path}

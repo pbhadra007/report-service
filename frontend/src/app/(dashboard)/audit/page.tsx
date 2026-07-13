@@ -7,6 +7,7 @@ import { saveAs } from "file-saver";
 import { Download, Search } from "lucide-react";
 import { fetchAuditLogs, AUDIT_ACTION_TYPES, type AuditLogEntry, type AuditLogStatus } from "@/features/audit/api";
 import { fetchAdminUsers } from "@/features/admin/api";
+import { BentoDatePicker } from "@/components/common/BentoDatePicker";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import { formatDateTime } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -143,26 +144,22 @@ export default function AuditPage(): React.JSX.Element {
           <div className="lg:col-span-2">
             <label className={labelClass}>Date Range</label>
             <div className="flex items-center gap-2">
-              <input
-                type="date"
-                aria-label="From date"
+              <BentoDatePicker
                 value={fromDate}
-                onChange={(event) => {
+                onChange={(value) => {
                   setPage(0);
-                  setFromDate(event.target.value);
+                  setFromDate(value);
                 }}
-                className={inputClass}
+                placeholder="From date"
               />
               <span className="text-gray-300">–</span>
-              <input
-                type="date"
-                aria-label="To date"
+              <BentoDatePicker
                 value={toDate}
-                onChange={(event) => {
+                onChange={(value) => {
                   setPage(0);
-                  setToDate(event.target.value);
+                  setToDate(value);
                 }}
-                className={inputClass}
+                placeholder="To date"
               />
             </div>
           </div>
@@ -308,8 +305,6 @@ export default function AuditPage(): React.JSX.Element {
           </div>
         </div>
       </div>
-
-      <footer className="text-center text-xs text-gray-400">© 2026 - Business Transformation, IPDC Finance Limited</footer>
     </div>
   );
 }

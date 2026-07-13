@@ -126,8 +126,6 @@ export default function AdminSettingsPage(): React.JSX.Element {
           </button>
         </div>
       </form>
-
-      <footer className="text-center text-xs text-gray-400">© 2026 - Business Transformation, IPDC Finance Limited</footer>
     </div>
   );
 }

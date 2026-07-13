@@ -97,7 +97,24 @@
       "Bash(NODE_PATH=\"/c/Users/prabal.bhadra/AppData/Local/npm-cache/_npx/e41f203b7505f1fb/node_modules\" node -e \"console.log\\(require.resolve\\('playwright', {paths: [process.env.NODE_PATH]}\\)\\)\")",
       "Bash(NODE_PATH=\"/c/Users/prabal.bhadra/AppData/Local/npm-cache/_npx/e41f203b7505f1fb/node_modules\" node audit-log-flow-check.js)",
       "Bash(NODE_PATH=/c/Users/prabal.bhadra/AppData/Local/npm-cache/_npx/e41f203b7505f1fb/node_modules node -e ' *)",
-      "Bash(env)"
+      "Bash(env)",
+      "Bash(node -e \"const {version} = require\\('date-fns/package.json'\\); console.log\\(version\\)\")",
+      "Bash(node \"C:\\\\Users\\\\PRABAL~1.BHA\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\D--IPDC---Office-Work-new-development-report-server-frontend\\\\5a9c3ec6-cf8a-4bd0-b0ed-904cb4c8e2ea\\\\scratchpad\\\\check.js\")",
+      "Bash(npx -y -p playwright node \"C:\\\\Users\\\\PRABAL~1.BHA\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\D--IPDC---Office-Work-new-development-report-server-frontend\\\\5a9c3ec6-cf8a-4bd0-b0ed-904cb4c8e2ea\\\\scratchpad\\\\check.js\")",
+      "Bash(node check.js)",
+      "Bash(node check2.js)",
+      "Bash(node check3.js)",
+      "Bash(node check4.js)",
+      "Bash(powershell -Command \"Get-NetTCPConnection -LocalPort 3000 -State Listen | Select-Object -ExpandProperty OwningProcess\" 2>&1)",
+      "Bash(powershell -Command \"Stop-Process -Id 38748 -Force\")",
+      "Bash(npx --yes playwright --version)",
+      "Bash(npm init *)",
+      "Bash(node test-datepicker.js)",
+      "Bash(node test-sidebar.js)",
+      "Bash(node test-header-mobile.js)",
+      "Bash(node test-sidebar2.js)",
+      "Bash(node test-mobile-nav.js)",
+      "Bash(node test-all-reports.js)"
     ]
   }
 }

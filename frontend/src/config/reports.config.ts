@@ -35,28 +35,62 @@ export const REPORT_CATEGORIES: ReportCategoryDefinition[] = [
 
 export type ReportParamKey =
   | "asOnDate"
+  | "fromDate"
+  | "toDate"
   | "branchCode"
   | "arrangementNo"
   | "t24AccountNo"
   | "buAccountNo"
   | "center"
-  | "rmCode";
+  | "rmCode"
+  | "customerId"
+  | "product"
+  | "maxRemainingCheque"
+  | "reportDate"
+  | "branchId"
+  | "reportDateLastDayOfMonth"
+  | "fromDateOptional"
+  | "toDateOptional"
+  | "arrangementIdOptional"
+  | "cifId";
 
 export interface ReportParamFieldDefinition {
   key: ReportParamKey;
   label: string;
   type: "date" | "text";
   placeholder?: string;
+  required?: boolean;
 }
 
 export const REPORT_PARAM_FIELDS: Record<ReportParamKey, ReportParamFieldDefinition> = {
   asOnDate: { key: "asOnDate", label: "As On Date (Last Working Day)", type: "date" },
+  fromDate: { key: "fromDate", label: "From Date", type: "date" },
+  toDate: { key: "toDate", label: "To Date", type: "date" },
   branchCode: { key: "branchCode", label: "Branch Code (00XX)", type: "text", placeholder: "00XX" },
   arrangementNo: { key: "arrangementNo", label: "Arrangement No", type: "text" },
   t24AccountNo: { key: "t24AccountNo", label: "T24 Account No", type: "text" },
   buAccountNo: { key: "buAccountNo", label: "BU Account No", type: "text" },
   center: { key: "center", label: "Center", type: "text" },
   rmCode: { key: "rmCode", label: "RM Code", type: "text" },
+  customerId: { key: "customerId", label: "Customer ID", type: "text" },
+  product: { key: "product", label: "Product", type: "text" },
+  maxRemainingCheque: { key: "maxRemainingCheque", label: "Max No of Remaining Cheque", type: "text" },
+  reportDate: { key: "reportDate", label: "Report Date", type: "date" },
+  branchId: { key: "branchId", label: "Branch ID", type: "text" },
+  reportDateLastDayOfMonth: {
+    key: "reportDateLastDayOfMonth",
+    label: "Report Date (Last Day of Month)",
+    type: "date",
+  },
+  fromDateOptional: { key: "fromDateOptional", label: "From Date (Optional)", type: "date", required: false },
+  toDateOptional: { key: "toDateOptional", label: "To Date (Optional)", type: "date", required: false },
+  arrangementIdOptional: {
+    key: "arrangementIdOptional",
+    label: "Arrangement ID (Optional)",
+    type: "text",
+    required: false,
+  },
+  cifId: { key: "cifId", label: "CIF ID", type: "text" },
 };
 
 export interface ReportDefinition {
@@ -104,29 +138,45 @@ export const REPORT_CATALOGUE: ReportDefinition[] = [
     "center",
     "rmCode",
   ]),
-  report(1079, "Disbursement Report", "loan", ["asOnDate", "branchCode"]),
-  report(1080, "Recovery Report", "loan"),
-  report(1095, "Loan Tax Certificate Final", "loan", ["asOnDate", "t24AccountNo"]),
-  report(1077, "Balance Certificate (Loan)", "loan", ["asOnDate", "t24AccountNo"]),
-  report(1088, "Loan Sheet (MME)", "loan"),
-  report(1017, "Remaining PDC (Retail)", "loan"),
-  report(1091, "Lien Report (D to L)", "loan"),
-  report(1016, "EMI Reminder (Retail)", "loan"),
-  report(1092, "Lien Report (L to D)", "loan"),
-  report(1093, "Lien Report (M)", "loan"),
-  report(1021, "New Disbursement", "loan"),
-  report(1023, "Loan Recovery", "loan"),
-  report(1084, "Deposit Payable Report", "loan"),
-  report(1024, "Interest Suspense Adjustment", "loan"),
-  report(1036, "Arr Bill OR OS", "loan"),
-  report(1073, "Customer Contact Info (Retail)", "loan"),
-  report(1037, "Arr Bill Payment", "loan"),
-  report(1082, "Early Settlement Report", "loan"),
-  report(1085, "Eligible Security Report", "loan"),
-  report(null, "SF Data Report", "loan"),
-  report(null, "Retail New Disbursement Report", "loan"),
-  report(null, "Loan SI Report", "loan"),
-  report(null, "NBR Loan Report", "loan"),
+  report(1079, "Disbursement Report", "loan", ["fromDate", "toDate", "t24AccountNo"]),
+  report(1080, "Recovery Report", "loan", ["fromDate", "toDate", "t24AccountNo"]),
+  report(1095, "Loan Tax Certificate Final", "loan", ["fromDate", "toDate", "t24AccountNo", "customerId"]),
+  report(1077, "Balance Certificate (Loan)", "loan", ["asOnDate", "t24AccountNo", "customerId"]),
+  report(1088, "Loan Sheet (MME)", "loan", [
+    "asOnDate",
+    "branchCode",
+    "arrangementNo",
+    "t24AccountNo",
+    "buAccountNo",
+  ]),
+  report(1017, "Remaining PDC (Retail)", "loan", ["t24AccountNo", "product", "maxRemainingCheque"]),
+  report(1091, "Lien Report (Deposit to Loan)", "loan", ["reportDate"]),
+  report(1016, "EMI Reminder (Retail)", "loan", ["fromDate", "toDate", "product"]),
+  report(1092, "Lien Report (Loan to Deposit)", "loan", ["reportDate"]),
+  report(1093, "Lien Report Master", "loan", ["reportDate"]),
+  report(1021, "New Disbursement", "loan", ["fromDate", "toDate"]),
+  report(1023, "Loan Recovery", "loan", ["fromDate", "toDate"]),
+  report(1084, "Deposit Payable Report", "loan", ["branchId", "fromDate", "toDate"]),
+  report(1024, "Interest Suspense Adjustment", "loan", ["reportDateLastDayOfMonth"]),
+  report(1036, "Arrangement Bill Original Outstanding Report", "loan", ["reportDate"]),
+  report(1073, "Customer Contact Info (Retail)", "loan", [
+    "reportDate",
+    "branchCode",
+    "arrangementNo",
+    "t24AccountNo",
+    "buAccountNo",
+  ]),
+  report(1037, "Arrangement Bill Repayment Report", "loan", ["reportDate"]),
+  report(1082, "Early Settlement Report", "loan", ["fromDate", "toDate", "t24AccountNo"]),
+  report(1085, "Eligible Security Report", "loan", [
+    "fromDateOptional",
+    "toDateOptional",
+    "arrangementIdOptional",
+  ]),
+  report(null, "SF Data Report", "loan", ["fromDate", "toDate"]),
+  report(null, "Retail New Disbursement Report", "loan", ["fromDate", "toDate"]),
+  report(null, "Loan SI Report", "loan", ["fromDate", "toDate"]),
+  report(null, "NBR Loan Report", "loan", ["fromDate", "toDate", "t24AccountNo", "cifId"]),
 
   // TREASURY REPORT
   report(null, "Daily Fund Position", "treasury"),

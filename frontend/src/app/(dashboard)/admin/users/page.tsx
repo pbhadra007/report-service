@@ -425,7 +425,8 @@ export default function AdminUsersPage(): React.JSX.Element {
           <button
             type="button"
             onClick={handleResetFilters}
-            className="text-sm font-medium text-gray-500 transition-colors hover:text-gray-700"
+            className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-5 py-2 text-sm
+                      font-medium text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-700"
           >
             Reset Filters
           </button>
@@ -630,8 +631,6 @@ export default function AdminUsersPage(): React.JSX.Element {
           </button>
         </div>
       </div>
-
-      <footer className="text-center text-xs text-gray-400">© 2026 - Business Transformation, IPDC Finance Limited</footer>
     </div>
   );
 }

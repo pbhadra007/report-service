@@ -444,8 +444,6 @@ export default function AdminPasswordPolicyPage(): React.JSX.Element {
           Save Policy
         </button>
       </div>
-
-      <footer className="text-center text-xs text-gray-400">© 2026 - Business Transformation, IPDC Finance Limited</footer>
     </div>
   );
 }

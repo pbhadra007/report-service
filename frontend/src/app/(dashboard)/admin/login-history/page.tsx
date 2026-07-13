@@ -20,6 +20,7 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { CustomSelect } from "@/components/common/CustomSelect";
+import { BentoDatePicker } from "@/components/common/BentoDatePicker";
 import { cn } from "@/lib/utils";
 
 type DeviceType = "Desktop" | "Mobile" | "Tablet";
@@ -485,13 +486,13 @@ export default function AdminLoginHistoryPage(): React.JSX.Element {
               <label htmlFor="dateFrom" className={labelClass}>
                 Date From
               </label>
-              <input id="dateFrom" type="date" value={dateFrom} onChange={(event) => setDateFrom(event.target.value)} className={inputClass} />
+              <BentoDatePicker id="dateFrom" value={dateFrom} onChange={setDateFrom} />
             </div>
             <div>
               <label htmlFor="dateTo" className={labelClass}>
                 Date To
               </label>
-              <input id="dateTo" type="date" value={dateTo} onChange={(event) => setDateTo(event.target.value)} className={inputClass} />
+              <BentoDatePicker id="dateTo" value={dateTo} onChange={setDateTo} />
             </div>
             <div>
               <label htmlFor="userSearch" className={labelClass}>
@@ -540,7 +541,8 @@ export default function AdminLoginHistoryPage(): React.JSX.Element {
             <button
               type="button"
               onClick={handleResetFilters}
-              className="text-sm font-medium text-gray-500 transition-colors hover:text-gray-700"
+              className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-5 py-2 text-sm
+                        font-medium text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-700"
             >
               Reset Filters
             </button>
@@ -725,8 +727,6 @@ export default function AdminLoginHistoryPage(): React.JSX.Element {
           </div>
         </div>
       </div>
-
-      <footer className="text-center text-xs text-gray-400">© 2026 - Business Transformation, IPDC Finance Limited</footer>
 
       {selectedRecord && <LoginDetailModal record={selectedRecord} onClose={() => setSelectedRecord(null)} />}
     </div>

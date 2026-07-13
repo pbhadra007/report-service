@@ -850,8 +850,6 @@ export default function AdminReportAccessPage(): React.JSX.Element {
           </button>
         </div>
       </div>
-
-      <footer className="text-center text-xs text-gray-400">© 2026 - Business Transformation, IPDC Finance Limited</footer>
     </div>
   );
 }

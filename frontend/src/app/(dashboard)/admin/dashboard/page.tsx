@@ -1,86 +1,158 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
-import { isToday } from "date-fns";
-import { Users, UserCheck, FileText, LogIn, UserPlus, Share2, ClipboardList, Settings } from "lucide-react";
+import { useRouter } from "next/navigation";
+import {
+  FileText,
+  Users2,
+  UserCheck,
+  ArrowUp,
+  ArrowDown,
+  ArrowRight,
+  UserPlus,
+  FileStack,
+  KeyRound,
+  ShieldCheck,
+  LogIn,
+  ClipboardList,
+} from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { fetchAdminUsers } from "@/features/admin/api";
-import { fetchAuditLogs } from "@/features/audit/api";
-import { REPORT_CATALOGUE } from "@/config/reports.config";
 
 interface StatCardProps {
-  icon: typeof Users;
+  icon: typeof Users2;
   iconBg: string;
   iconColor: string;
   label: string;
-  value: string;
+  value: number;
   sub: string;
+  trend: "up" | "down";
+  accentColor: string;
+  sparkline: number[];
 }
 
-function StatCard({ icon: Icon, iconBg, iconColor, label, value, sub }: StatCardProps): React.JSX.Element {
+function SparklineWave({ points, color }: { points: number[]; color: string }): React.JSX.Element {
+  const width = 200;
+  const height = 48;
+  const max = Math.max(...points);
+  const min = Math.min(...points);
+  const range = max - min || 1;
+  const step = width / (points.length - 1 || 1);
+  const coords = points.map((point, index) => ({
+    x: index * step,
+    y: height - ((point - min) / range) * (height - 6) - 3,
+  }));
+  const linePath = coords.map((point, index) => `${index === 0 ? "M" : "L"}${point.x},${point.y}`).join(" ");
+  const areaPath = `${linePath} L${width},${height} L0,${height} Z`;
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-      <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${iconBg}`}>
-        <Icon className={`h-4.5 w-4.5 ${iconColor}`} />
-      </div>
-      <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mt-3">{label}</p>
-      <p className="text-2xl font-bold text-gray-800 mt-1">{value}</p>
-      <p className="text-xs text-gray-400 mt-1">{sub}</p>
+    <div className="-mx-6 -mb-6 mt-4 overflow-hidden rounded-b-2xl">
+      <svg viewBox={`0 0 ${width} ${height}`} className="block h-12 w-full" preserveAspectRatio="none">
+        <path d={areaPath} fill={color} fillOpacity={0.12} stroke="none" />
+        <path d={linePath} fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
     </div>
   );
 }
 
-interface QuickActionProps {
-  href: string;
-  icon: typeof Users;
-  title: string;
-  description: string;
+export function StatCard({ icon: Icon, iconBg, iconColor, label, value, sub, trend, accentColor, sparkline }: StatCardProps): React.JSX.Element {
+  const trendPct = Math.round(Math.abs(((sparkline[sparkline.length - 1] - sparkline[0]) / sparkline[0]) * 100));
+  const TrendIcon = trend === "up" ? ArrowUp : ArrowDown;
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 overflow-hidden">
+      <div className="flex items-start justify-between">
+        <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${iconBg}`}>
+          <Icon className={`h-6 w-6 ${iconColor}`} />
+        </div>
+        <span
+          className={`inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-semibold ${
+            trend === "up" ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"
+          }`}
+        >
+          <TrendIcon className="h-3 w-3" />
+          {trendPct}%
+        </span>
+      </div>
+
+      <p className="text-4xl font-bold text-gray-800 mt-4">{value}</p>
+      <p className="font-semibold text-gray-700 mt-1">{label}</p>
+      <p className="text-xs text-gray-400">{sub}</p>
+
+      <SparklineWave points={sparkline} color={accentColor} />
+    </div>
+  );
 }
 
-function QuickAction({ href, icon: Icon, title, description }: QuickActionProps): React.JSX.Element {
+interface QuickAccessStat {
+  value: string;
+  label: string;
+}
+
+interface QuickAccessCardProps {
+  icon: typeof UserPlus;
+  iconBg: string;
+  iconColor: string;
+  accentColor: string;
+  title: string;
+  description: string;
+  stats: [QuickAccessStat, QuickAccessStat];
+  actionLabel: string;
+  onClick: () => void;
+}
+
+export function QuickAccessCard({
+  icon: Icon,
+  iconBg,
+  iconColor,
+  accentColor,
+  title,
+  description,
+  stats,
+  actionLabel,
+  onClick,
+}: QuickAccessCardProps): React.JSX.Element {
   return (
-    <Link
-      href={href}
-      className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5
-                hover:shadow-md hover:border-[#ED017F]
-                transition-all duration-200 cursor-pointer group"
-    >
-      <div className="w-10 h-10 rounded-xl bg-[#FFF0F9] flex items-center
-                      justify-center mb-3 group-hover:bg-[#ED017F] transition-colors">
-        <Icon className="w-5 h-5 text-[#ED017F] group-hover:text-white" />
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group">
+      <div className="h-1 w-full" style={{ backgroundColor: accentColor }} />
+      <div className="p-6">
+        <div
+          className={`flex h-12 w-12 items-center justify-center rounded-2xl ${iconBg} transition-transform duration-200 group-hover:scale-110`}
+        >
+          <Icon className={`h-6 w-6 ${iconColor}`} />
+        </div>
+
+        <h3 className="text-base font-bold text-gray-900 mt-4">{title}</h3>
+        <p className="text-sm text-gray-400 leading-relaxed mt-1">{description}</p>
+
+        <div className="flex items-center gap-6 mt-4">
+          {stats.map((stat) => (
+            <div key={stat.label}>
+              <p className="font-bold text-gray-900">{stat.value}</p>
+              <p className="text-xs text-gray-400">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="border-b border-gray-100 mt-4" />
+
+        <button
+          type="button"
+          onClick={onClick}
+          className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl
+                    bg-[#ed017f] px-4 py-2.5 text-sm font-semibold text-white border border-[#ed017f]
+                    transition-colors duration-200
+                    hover:bg-white hover:text-[#ed017f]"
+        >
+          {actionLabel}
+          <ArrowRight className="h-4 w-4" />
+        </button>
       </div>
-      <h3 className="font-semibold text-gray-800 text-sm">{title}</h3>
-      <p className="text-xs text-gray-400 mt-0.5">{description}</p>
-    </Link>
+    </div>
   );
 }
 
 export default function AdminDashboardPage(): React.JSX.Element {
   const { user } = useAuth();
-
-  const usersQuery = useQuery({
-    queryKey: ["admin", "users"],
-    queryFn: fetchAdminUsers,
-  });
-
-  const auditQuery = useQuery({
-    queryKey: ["audit", "logs", "recent"],
-    queryFn: () => fetchAuditLogs({ page: 0, pageSize: 100 }),
-  });
-
-  const totalUsers = usersQuery.data?.length;
-  const activeUsers = usersQuery.data?.filter((adminUser) => adminUser.active).length;
-  const recentLogins = auditQuery.data?.content.filter(
-    (entry) => entry.action === "LOGIN" && isToday(new Date(entry.timestamp)),
-  ).length;
-
-  const statValue = (value: number | undefined, isError: boolean): string => {
-    if (isError) return "—";
-    if (value === undefined) return "…";
-    return String(value);
-  };
+  const router = useRouter();
 
   return (
     <div className="grid gap-4">
@@ -92,67 +164,131 @@ export default function AdminDashboardPage(): React.JSX.Element {
         <Image src="/images/ipdc-logo.png" alt="IPDC" width={150} height={74} className="h-10 w-auto object-contain opacity-20" />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
         <StatCard
-          icon={Users}
-          iconBg="bg-blue-50"
-          iconColor="text-blue-500"
+          icon={FileText}
+          iconBg="bg-[#FFE6F4]"
+          iconColor="text-[#ED017F]"
+          label="Total Reports"
+          value={105}
+          sub="+3 this month"
+          trend="up"
+          accentColor="#ED017F"
+          sparkline={[88, 90, 93, 95, 99, 102, 105]}
+        />
+        <StatCard
+          icon={Users2}
+          iconBg="bg-indigo-100"
+          iconColor="text-indigo-600"
           label="Total Users"
-          value={statValue(totalUsers, usersQuery.isError)}
-          sub="registered accounts"
+          value={126}
+          sub="+12 this month"
+          trend="up"
+          accentColor="#6366F1"
+          sparkline={[98, 104, 108, 112, 116, 120, 126]}
         />
         <StatCard
           icon={UserCheck}
-          iconBg="bg-green-50"
-          iconColor="text-green-500"
+          iconBg="bg-green-100"
+          iconColor="text-green-600"
           label="Active Users"
-          value={statValue(activeUsers, usersQuery.isError)}
-          sub="currently enabled"
-        />
-        <StatCard
-          icon={FileText}
-          iconBg="bg-purple-50"
-          iconColor="text-purple-500"
-          label="Total Reports"
-          value={String(REPORT_CATALOGUE.length)}
-          sub="in the catalogue"
-        />
-        <StatCard
-          icon={LogIn}
-          iconBg="bg-amber-50"
-          iconColor="text-amber-600"
-          label="Recent Logins Today"
-          value={statValue(recentLogins, auditQuery.isError)}
-          sub="sign-ins today"
+          value={98}
+          sub="77.8% of total"
+          trend="up"
+          accentColor="#22C55E"
+          sparkline={[72, 78, 82, 86, 90, 94, 98]}
         />
       </div>
 
       <div className="flex flex-col gap-3">
-        <h2 className="text-sm font-semibold text-gray-600">Quick Actions</h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <QuickAction
-            href="/admin/users/new"
+        <div>
+          <h2 className="text-base font-bold text-gray-900">Quick Access</h2>
+          <p className="text-sm text-gray-400">Common administrative tasks</p>
+        </div>
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+          <QuickAccessCard
             icon={UserPlus}
+            iconBg="bg-indigo-100"
+            iconColor="text-indigo-600"
+            accentColor="#6366f1"
             title="Create New User"
             description="Provision a new report service account"
+            stats={[
+              { value: "126", label: "Total" },
+              { value: "12", label: "Added" },
+            ]}
+            actionLabel="Create User"
+            onClick={() => router.push("/admin/users/new")}
           />
-          <QuickAction
-            href="/admin/report-access"
-            icon={Share2}
+          <QuickAccessCard
+            icon={FileStack}
+            iconBg="bg-[#FFE6F4]"
+            iconColor="text-[#ED017F]"
+            accentColor="#ED017F"
+            title="Access Reports"
+            description="Browse and generate reports from the catalogue"
+            stats={[
+              { value: "105", label: "Total" },
+              { value: "8", label: "Categories" },
+            ]}
+            actionLabel="View Reports"
+            onClick={() => router.push("/admin/reports")}
+          />
+          <QuickAccessCard
+            icon={KeyRound}
+            iconBg="bg-green-100"
+            iconColor="text-green-600"
+            accentColor="#22c55e"
             title="Manage Report Access"
             description="Assign or revoke per-user report access"
+            stats={[
+              { value: "98", label: "Users" },
+              { value: "1,890", label: "Assigned" },
+            ]}
+            actionLabel="Manage Access"
+            onClick={() => router.push("/admin/report-access")}
           />
-          <QuickAction
-            href="/audit"
+          <QuickAccessCard
+            icon={ShieldCheck}
+            iconBg="bg-purple-100"
+            iconColor="text-purple-600"
+            accentColor="#a855f7"
+            title="Permission Management"
+            description="Define roles and their assigned permissions"
+            stats={[
+              { value: "156", label: "Permissions" },
+              { value: "24", label: "Roles" },
+            ]}
+            actionLabel="Manage Permissions"
+            onClick={() => router.push("/admin/permissions")}
+          />
+          <QuickAccessCard
+            icon={LogIn}
+            iconBg="bg-blue-100"
+            iconColor="text-blue-600"
+            accentColor="#3b82f6"
+            title="Login History"
+            description="Track sign-ins across the system"
+            stats={[
+              { value: "142", label: "Today" },
+              { value: "3,204", label: "This Month" },
+            ]}
+            actionLabel="View History"
+            onClick={() => router.push("/admin/login-history")}
+          />
+          <QuickAccessCard
             icon={ClipboardList}
-            title="View Audit Logs"
+            iconBg="bg-amber-100"
+            iconColor="text-amber-600"
+            accentColor="#f59e0b"
+            title="Audit Logs"
             description="Review recent system and user activity"
-          />
-          <QuickAction
-            href="/admin/reports"
-            icon={Settings}
-            title="Report Management"
-            description="Manage the report catalogue and access"
+            stats={[
+              { value: "89", label: "Today" },
+              { value: "12,450", label: "Total" },
+            ]}
+            actionLabel="View Logs"
+            onClick={() => router.push("/admin/audit")}
           />
         </div>
       </div>

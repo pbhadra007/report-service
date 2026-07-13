@@ -3,7 +3,7 @@
 import { use, useMemo, useState } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { useForm, type Resolver } from "react-hook-form";
+import { Controller, useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
@@ -15,6 +15,7 @@ import { generateReport } from "@/features/reports/api";
 import { downloadReportBlob } from "@/lib/download";
 import type { ReportOutputFormat } from "@/features/reports/types";
 import { Breadcrumb } from "@/components/common/Breadcrumb";
+import { BentoDatePicker } from "@/components/common/BentoDatePicker";
 import { cn } from "@/lib/utils";
 
 export interface ReportParameterFormPageProps {
@@ -31,7 +32,9 @@ function buildSchema(paramKeys: ReportParamKey[]) {
     format: z.enum(["PDF", "XLS"]),
   };
   for (const key of paramKeys) {
-    shape[key] = key === "asOnDate" ? z.string().min(1, "As On Date is required") : z.string();
+    const field = REPORT_PARAM_FIELDS[key];
+    const isRequired = field.type === "date" && field.required !== false;
+    shape[key] = isRequired ? z.string().min(1, `${field.label} is required`) : z.string();
   }
   return z.object(shape);
 }
@@ -65,6 +68,7 @@ export default function ReportParameterFormPage({
 
   const {
     register,
+    control,
     handleSubmit,
     reset,
     formState: { errors },
@@ -140,15 +144,25 @@ export default function ReportParameterFormPage({
                   <label htmlFor={key} className="text-xs font-medium uppercase tracking-wide text-gray-500">
                     {field.label}
                   </label>
-                  <input
-                    id={key}
-                    type={field.type}
-                    placeholder={field.placeholder}
-                    {...register(key)}
-                    className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700
-                              outline-none focus:outline-none focus:ring-2 focus:ring-[#232B2B] focus:border-transparent
-                              placeholder:text-gray-300 transition-all duration-200"
-                  />
+                  {field.type === "date" ? (
+                    <Controller
+                      name={key}
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <BentoDatePicker id={key} value={value} onChange={onChange} />
+                      )}
+                    />
+                  ) : (
+                    <input
+                      id={key}
+                      type={field.type}
+                      placeholder={field.placeholder}
+                      {...register(key)}
+                      className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700
+                                outline-none focus:outline-none focus:ring-2 focus:ring-[#232B2B] focus:border-transparent
+                                placeholder:text-gray-300 transition-all duration-200"
+                    />
+                  )}
                   {errors[key] && <p className="text-xs text-red-600">{errors[key]?.message}</p>}
                 </div>
               );
@@ -172,7 +186,7 @@ export default function ReportParameterFormPage({
                 >
                   <input type="radio" value={option.value} className="sr-only" {...formatField} />
                   {isSelected && (
-                    <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#232B2B]">
+                    <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#ed017f]">
                       <Check className="h-3 w-3 text-white" />
                     </span>
                   )}
@@ -195,9 +209,9 @@ export default function ReportParameterFormPage({
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#232B2B] text-white text-sm
-                      font-semibold border border-transparent hover:bg-white hover:text-[#232B2B]
-                      hover:border-[#232B2B] transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#ed017f] text-white text-sm
+                      font-semibold border border-[#ed017f] hover:bg-white hover:text-[#ed017f]
+                      transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
           >
             {mutation.isPending && (
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
@@ -211,17 +225,13 @@ export default function ReportParameterFormPage({
               setSelectedFormat("PDF");
               setStatus("idle");
             }}
-            className="px-6 py-2.5 rounded-xl bg-white text-gray-700 text-sm font-medium border border-gray-200
+            className="px-6 py-2.5 rounded-full bg-white text-gray-700 text-sm font-medium border border-gray-200
                       hover:border-gray-300 hover:bg-gray-50 transition-all duration-200"
           >
             Reset Input
           </button>
         </div>
       </form>
-
-      <footer className="mt-8 text-center text-xs text-gray-400">
-        © 2026 - Business Transformation, IPDC Finance Limited
-      </footer>
     </div>
   );
 }

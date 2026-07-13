@@ -455,8 +455,6 @@ export default function AdminEditUserPage({ params }: AdminEditUserPageProps): R
           </button>
         </div>
       </form>
-
-      <footer className="mt-2 text-center text-xs text-gray-400">© 2026 - Business Transformation, IPDC Finance Limited</footer>
     </div>
   );
 }

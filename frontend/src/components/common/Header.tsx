@@ -1,11 +1,13 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { Bell, ChevronDown, UserCircle, LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useAuth } from "@/hooks/useAuth";
 import { getCategoryById, getReportById } from "@/config/reports.config";
+import { cn } from "@/lib/utils";
 
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -35,6 +37,23 @@ function getPageTitle(pathname: string): string {
 export function Header(): React.JSX.Element {
   const { user } = useAuth();
   const pathname = usePathname();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isProfileOpen) return;
+    const handleClickOutside = (event: MouseEvent): void => {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isProfileOpen]);
+
+  useEffect(() => {
+    setIsProfileOpen(false);
+  }, [pathname]);
 
   return (
     <header className="sticky top-0 z-10 flex h-[60px] w-full shrink-0 items-center justify-between border-b border-gray-100 bg-white px-6">
@@ -48,8 +67,13 @@ export function Header(): React.JSX.Element {
 
           <div className="h-6 w-px bg-gray-100" />
 
-          <div className="group relative">
-            <button type="button" className="flex items-center gap-2.5 rounded-xl py-1.5 pl-1.5 pr-2 transition-colors hover:bg-gray-50">
+          <div ref={profileRef} className="relative">
+            <button
+              type="button"
+              onClick={() => setIsProfileOpen((prev) => !prev)}
+              aria-expanded={isProfileOpen}
+              className="flex items-center gap-2.5 rounded-xl py-1.5 pl-1.5 pr-2 transition-colors hover:bg-gray-50"
+            >
               <div className="hidden text-right sm:block">
                 <p className="text-sm font-medium text-gray-700">{user.name}</p>
                 <p className="text-xs text-gray-400">{user.designation ?? user.employeeId}</p>
@@ -57,31 +81,31 @@ export function Header(): React.JSX.Element {
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#ED017F] text-xs font-semibold text-white">
                 {getInitials(user.name)}
               </div>
-              <ChevronDown className="h-4 w-4 text-gray-400 transition-transform group-hover:rotate-180" />
+              <ChevronDown className={cn("h-4 w-4 text-gray-400 transition-transform", isProfileOpen && "rotate-180")} />
             </button>
 
-            <div
-              className="invisible absolute right-0 top-full z-20 w-48 pt-2 opacity-0 transition-opacity duration-150
-                        group-hover:visible group-hover:opacity-100"
-            >
-              <div className="overflow-hidden rounded-xl border border-gray-100 bg-white py-1.5 shadow-lg">
-                <Link
-                  href={user.isAdmin ? "/admin/profile" : "/profile"}
-                  className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-                >
-                  <UserCircle className="h-4 w-4 text-gray-400" />
-                  Profile
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => signOut({ callbackUrl: "/login" })}
-                  className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-red-50 hover:text-red-500"
-                >
-                  <LogOut className="h-4 w-4 text-gray-400" />
-                  Sign Out
-                </button>
+            {isProfileOpen && (
+              <div className="absolute right-0 top-full z-20 w-48 pt-2">
+                <div className="overflow-hidden rounded-xl border border-gray-100 bg-white py-1.5 shadow-lg">
+                  <Link
+                    href={user.isAdmin ? "/admin/profile" : "/profile"}
+                    onClick={() => setIsProfileOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                  >
+                    <UserCircle className="h-4 w-4 text-gray-400" />
+                    Profile
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => signOut({ callbackUrl: "/login" })}
+                    className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-red-50 hover:text-red-500"
+                  >
+                    <LogOut className="h-4 w-4 text-gray-400" />
+                    Sign Out
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       )}

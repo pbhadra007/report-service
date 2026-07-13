@@ -107,8 +107,6 @@ export default function SchedulePage(): React.JSX.Element {
           </table>
         </div>
       </div>
-
-      <footer className="text-center text-xs text-gray-400">© 2026 - Business Transformation, IPDC Finance Limited</footer>
     </div>
   );
 }

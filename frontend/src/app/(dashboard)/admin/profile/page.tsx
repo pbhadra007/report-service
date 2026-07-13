@@ -643,8 +643,6 @@ export default function AdminProfilePage(): React.JSX.Element {
         </div>
       </div>
 
-      <footer className="text-center text-xs text-gray-400">© 2026 - Business Transformation, IPDC Finance Limited</footer>
-
       {showEditModal && <EditProfileModal profile={profile} onClose={() => setShowEditModal(false)} onSave={handleSaveProfile} />}
       {showPasswordModal && <ChangePasswordModal onClose={() => setShowPasswordModal(false)} onSuccess={handlePasswordSuccess} />}
     </div>
