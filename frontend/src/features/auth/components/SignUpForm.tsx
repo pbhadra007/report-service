@@ -94,7 +94,7 @@ function Field({ label, error, children }: FieldProps): React.JSX.Element {
 }
 
 const inputClassName =
-  "w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 font-poppins text-sm text-gray-700 " +
+  "w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 font-rubik text-sm text-gray-700 " +
   "focus:outline-none focus:ring-2 focus:ring-[#232B2B] focus:border-transparent placeholder:text-gray-300 " +
   "transition-all duration-200 appearance-none";
 
@@ -112,7 +112,7 @@ function PrefixField({ prefix, placeholder, type = "text", registration }: Prefi
       <input
         type={type}
         placeholder={placeholder}
-        className="min-w-0 flex-1 bg-transparent py-2.5 pl-1 pr-3 font-poppins text-sm text-gray-700 outline-none"
+        className="min-w-0 flex-1 bg-transparent py-2.5 pl-1 pr-3 font-rubik text-sm text-gray-700 outline-none"
         {...registration}
       />
     </div>
@@ -131,7 +131,7 @@ function SuffixField({ suffix, placeholder, registration }: SuffixFieldProps): R
       <input
         type="text"
         placeholder={placeholder}
-        className="min-w-0 flex-1 bg-transparent py-2.5 pr-1 font-poppins text-sm text-gray-700 outline-none"
+        className="min-w-0 flex-1 bg-transparent py-2.5 pr-1 font-rubik text-sm text-gray-700 outline-none"
         {...registration}
       />
       <span className="select-none whitespace-nowrap pr-3 text-sm font-medium text-gray-400">{suffix}</span>

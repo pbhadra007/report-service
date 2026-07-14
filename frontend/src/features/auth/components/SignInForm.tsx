@@ -56,7 +56,7 @@ function generateCaptcha(): Captcha {
 }
 
 const fieldClassName =
-  "w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 font-poppins text-sm text-gray-700 " +
+  "w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 font-rubik text-sm text-gray-700 " +
   "focus:outline-none focus:ring-2 focus:ring-[#232B2B] focus:border-transparent placeholder:text-gray-300 " +
   "transition-all duration-200";
 
@@ -136,7 +136,7 @@ export function SignInForm({ onForgotPassword }: SignInFormProps): React.JSX.Ele
             type="text"
             autoComplete="username"
             placeholder="Enter User ID"
-            className="min-w-0 flex-1 bg-transparent py-2.5 pl-1 pr-3 font-poppins text-sm text-gray-700 outline-none"
+            className="min-w-0 flex-1 bg-transparent py-2.5 pl-1 pr-3 font-rubik text-sm text-gray-700 outline-none"
             {...register("usernameSuffix")}
           />
         </div>
@@ -198,7 +198,7 @@ export function SignInForm({ onForgotPassword }: SignInFormProps): React.JSX.Ele
             placeholder="Answer"
             value={captchaAnswer}
             onChange={(event) => setCaptchaAnswer(event.target.value)}
-            className="w-28 rounded-xl border border-gray-200 bg-white px-3 py-2 text-center font-poppins text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#232B2B]"
+            className="w-28 rounded-xl border border-gray-200 bg-white px-3 py-2 text-center font-rubik text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#232B2B]"
           />
         </div>
         {captchaError && <p className="text-xs text-red-600">{captchaError}</p>}

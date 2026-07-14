@@ -14,7 +14,7 @@ interface ForgotPasswordFormProps {
 const RESEND_SECONDS = 30;
 
 const inputClassName =
-  "w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 font-poppins text-sm text-gray-700 " +
+  "w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 font-rubik text-sm text-gray-700 " +
   "focus:outline-none focus:ring-2 focus:ring-[#232B2B] focus:border-transparent placeholder:text-gray-300 " +
   "transition-all duration-200";
 
@@ -194,7 +194,7 @@ export function ForgotPasswordForm({ onBackToSignIn, onResetSuccess }: ForgotPas
               placeholder="Enter User ID"
               value={userIdSuffix}
               onChange={(event) => setUserIdSuffix(event.target.value)}
-              className="min-w-0 flex-1 bg-transparent py-2.5 pl-1 pr-3 font-poppins text-sm text-gray-700 outline-none"
+              className="min-w-0 flex-1 bg-transparent py-2.5 pl-1 pr-3 font-rubik text-sm text-gray-700 outline-none"
               required
             />
           </div>

@@ -26,6 +26,8 @@ import {
   FileSpreadsheet,
   ChevronLeft,
   ChevronRight,
+  Table2,
+  LayoutGrid,
 } from "lucide-react";
 import { ROLE_PERMISSIONS, type ReportAccessScope, type RolePermissions } from "@/config/roles.config";
 import type { Role } from "@/types";
@@ -988,40 +990,39 @@ export default function AdminRolesPage(): React.JSX.Element {
           </div>
 
           <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 px-5 py-4">
-            <div className="relative w-56">
-              <select
+            <div className="w-56">
+              <CustomSelect
+                id="bulkAction"
                 value={bulkAction}
-                onChange={(event) => handleBulkAction(event.target.value)}
-                className={selectClass}
-              >
-                <option value="">Bulk Actions</option>
-                <option value="Activate Selected">Activate Selected</option>
-                <option value="Deactivate Selected">Deactivate Selected</option>
-                <option value="Export Selected">Export Selected</option>
-                <option value="Delete Selected">Delete Selected</option>
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                onChange={handleBulkAction}
+                options={["Activate Selected", "Deactivate Selected", "Export Selected", "Delete Selected"]}
+                placeholder="Bulk Actions"
+              />
             </div>
 
-            <div className="flex items-center gap-4 text-sm text-gray-600">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={viewMode === "table"}
-                  onChange={() => setViewMode("table")}
-                  className="h-4 w-4 rounded border-gray-300 text-[#232B2B] focus:ring-[#232B2B]"
-                />
+            <div className="inline-flex rounded-full border border-gray-200 bg-white p-1">
+              <button
+                type="button"
+                onClick={() => setViewMode("table")}
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+                  viewMode === "table" ? "bg-[#ED017F] text-white" : "text-gray-500 hover:bg-gray-100",
+                )}
+              >
+                <Table2 className="h-3.5 w-3.5" />
                 Table View
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={viewMode === "card"}
-                  onChange={() => setViewMode("card")}
-                  className="h-4 w-4 rounded border-gray-300 text-[#232B2B] focus:ring-[#232B2B]"
-                />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("card")}
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+                  viewMode === "card" ? "bg-[#ED017F] text-white" : "text-gray-500 hover:bg-gray-100",
+                )}
+              >
+                <LayoutGrid className="h-3.5 w-3.5" />
                 Card View
-              </label>
+              </button>
             </div>
           </div>
         </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -290,13 +289,10 @@ export function Sidebar(): React.JSX.Element {
         <nav className="relative z-10 flex h-full w-full flex-col overflow-y-auto bg-white shadow-[4px_0_24px_0_rgba(0,0,0,0.08)]">
           <div
             className={cn(
-              "flex items-center py-6",
-              isCollapsed ? "justify-center px-2" : "justify-between px-5",
+              "flex items-center py-4",
+              isCollapsed ? "justify-center px-2" : "justify-end px-5",
             )}
           >
-            {!isCollapsed && (
-              <Image src="/images/ipdc-logo.png" alt="IPDC" width={150} height={74} className="h-12 w-auto object-contain" priority />
-            )}
             <button
               type="button"
               onClick={() => setIsCollapsed((prev) => !prev)}

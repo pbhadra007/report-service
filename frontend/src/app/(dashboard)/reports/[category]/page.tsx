@@ -88,9 +88,9 @@ export default function ReportCategoryPage({ params }: ReportCategoryPageProps):
               <p className="text-xs text-gray-400 mt-0.5">Report ID: {report.reportId}</p>
               <Link
                 href={`/reports/${category.id}/${report.reportId}`}
-                className="mt-4 flex w-full items-center justify-center py-2 rounded-xl bg-[#232B2B] text-white
-                          text-xs font-medium hover:bg-white hover:text-[#232B2B]
-                          hover:border hover:border-[#232B2B] transition-all duration-200"
+                className="mt-4 flex w-full items-center justify-center py-2 rounded-full border border-[#ED017F] bg-white
+                          text-[#ED017F] text-xs font-medium hover:bg-[#ED017F] hover:text-white
+                          transition-all duration-200"
               >
                 Generate Report →
               </Link>

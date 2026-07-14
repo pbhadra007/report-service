@@ -114,7 +114,8 @@
       "Bash(node test-header-mobile.js)",
       "Bash(node test-sidebar2.js)",
       "Bash(node test-mobile-nav.js)",
-      "Bash(node test-all-reports.js)"
+      "Bash(node test-all-reports.js)",
+      "Bash(node -e \"const m = require\\('lucide-react'\\); console.log\\(typeof m.ListTree, typeof m.Table2, typeof m.Network\\)\")"
     ]
   }
 }

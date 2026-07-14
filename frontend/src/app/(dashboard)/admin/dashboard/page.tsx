@@ -137,10 +137,10 @@ export function QuickAccessCard({
         <button
           type="button"
           onClick={onClick}
-          className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl
-                    bg-[#ed017f] px-4 py-2.5 text-sm font-semibold text-white border border-[#ed017f]
+          className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-full
+                    bg-white px-4 py-2.5 text-sm font-semibold text-[#ed017f] border border-[#ed017f]
                     transition-colors duration-200
-                    hover:bg-white hover:text-[#ed017f]"
+                    hover:bg-[#ed017f] hover:text-white"
         >
           {actionLabel}
           <ArrowRight className="h-4 w-4" />

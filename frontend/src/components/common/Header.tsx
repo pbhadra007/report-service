@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Bell, ChevronDown, UserCircle, LogOut } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
@@ -56,8 +57,12 @@ export function Header(): React.JSX.Element {
   }, [pathname]);
 
   return (
-    <header className="sticky top-0 z-10 flex h-[60px] w-full shrink-0 items-center justify-between border-b border-gray-100 bg-white px-6">
-      <h1 className="text-lg font-semibold text-gray-800">{getPageTitle(pathname)}</h1>
+    <header className="sticky top-0 z-30 flex h-20 w-full shrink-0 items-center justify-between border-b border-gray-100 bg-white px-6">
+      <div className="flex items-center gap-4">
+        <Image src="/images/ipdc-logo.png" alt="IPDC" width={150} height={74} className="h-16 w-auto object-contain" priority />
+        <div className="hidden h-8 w-px bg-gray-100 sm:block" />
+        <h1 className="hidden text-lg font-semibold text-gray-800 sm:block">{getPageTitle(pathname)}</h1>
+      </div>
 
       {user && (
         <div className="flex items-center gap-4">
