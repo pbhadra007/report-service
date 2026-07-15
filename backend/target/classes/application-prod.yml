@@ -1,0 +1,78 @@
+server:
+  port: ${SERVER_PORT:8443}
+  ssl:
+    enabled: true
+    key-store: ${SSL_KEYSTORE_PATH:/etc/irs/keystore.p12}
+    key-store-password: ${SSL_KEYSTORE_PASSWORD}
+    key-store-type: PKCS12
+    key-alias: ${SSL_KEY_ALIAS:irs-gateway}
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: irs-user-service
+          uri: lb://irs-user-service
+          predicates:
+            - Path=/api/v1/auth/**,/api/v1/users/**
+
+        - id: irs-report-service
+          uri: lb://irs-report-service
+          predicates:
+            - Path=/api/v1/reports/**
+
+        - id: irs-etl-service
+          uri: lb://irs-etl-service
+          predicates:
+            - Path=/api/v1/etl/**
+
+        - id: irs-export-service
+          uri: lb://irs-export-service
+          predicates:
+            - Path=/api/v1/exports/**
+
+        - id: irs-scheduler-service
+          uri: lb://irs-scheduler-service
+          predicates:
+            - Path=/api/v1/schedules/**
+
+        - id: irs-audit-service
+          uri: lb://irs-audit-service
+          predicates:
+            - Path=/api/v1/audit/**
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD}
+      ssl:
+        enabled: ${REDIS_SSL_ENABLED:true}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI}
+  instance:
+    prefer-ip-address: true
+
+jwt:
+  secret: ${JWT_SECRET}
+
+ratelimit:
+  capacity: ${RATE_LIMIT_CAPACITY:200}
+  window-seconds: ${RATE_LIMIT_WINDOW_SECONDS:60}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  endpoint:
+    health:
+      show-details: never
+
+logging:
+  level:
+    root: WARN
+    com.ipdc.irs.gateway: WARN
+    org.springframework.cloud.gateway: WARN

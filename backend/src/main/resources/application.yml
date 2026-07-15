@@ -1,0 +1,82 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: irs-api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+      routes:
+        - id: irs-user-service
+          uri: lb://irs-user-service
+          predicates:
+            - Path=/api/v1/auth/**,/api/v1/users/**
+
+        - id: irs-report-service
+          uri: lb://irs-report-service
+          predicates:
+            - Path=/api/v1/reports/**
+
+        - id: irs-etl-service
+          uri: lb://irs-etl-service
+          predicates:
+            - Path=/api/v1/etl/**
+
+        - id: irs-export-service
+          uri: lb://irs-export-service
+          predicates:
+            - Path=/api/v1/exports/**
+
+        - id: irs-scheduler-service
+          uri: lb://irs-scheduler-service
+          predicates:
+            - Path=/api/v1/schedules/**
+
+        - id: irs-audit-service
+          uri: lb://irs-audit-service
+          predicates:
+            - Path=/api/v1/audit/**
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+
+jwt:
+  secret: ${JWT_SECRET:changeit-local-dev-secret-key-please-override-in-prod-min-32-bytes}
+
+ratelimit:
+  capacity: ${RATE_LIMIT_CAPACITY:100}
+  window-seconds: ${RATE_LIMIT_WINDOW_SECONDS:60}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus,gateway,info
+  endpoint:
+    health:
+      show-details: when-authorized
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name},%X{correlationId}]"
+  level:
+    root: INFO
+    com.ipdc.irs.gateway: INFO
+    org.springframework.cloud.gateway: INFO

@@ -28,7 +28,7 @@ export default function LoginPage(): React.JSX.Element {
         </div>
 
         <p className="absolute bottom-8 px-6 text-center text-xs text-gray-400">
-          © 2026 - Business Transformation, IPDC Finance Limited
+          © 2026 - Business Transformation, IPDC Finance PLC
         </p>
       </div>
 
