@@ -126,7 +126,7 @@ export default function ReportParameterFormPage({
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-6">
           <div className="flex items-center gap-3">
             <h1 className="text-xl font-bold text-gray-800">{report.name}</h1>
             <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
@@ -170,7 +170,7 @@ export default function ReportParameterFormPage({
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-5">
           <h2 className="mb-4 text-sm font-semibold text-gray-500 uppercase tracking-wide">Select Format</h2>
           <div className="grid grid-cols-2 gap-4">
             {FORMAT_OPTIONS.map((option) => {

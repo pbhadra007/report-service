@@ -232,7 +232,7 @@ function SparklineWave({ points, color }: { points: number[]; color: string }): 
 
 function StatCard({ icon: Icon, label, value, caption, accent, sparkline }: StatCardData): React.JSX.Element {
   return (
-    <div className="flex flex-col gap-3 overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+    <div className="flex flex-col gap-3 overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-md">
       <div className="flex items-center gap-2">
         <span className="flex h-9 w-9 items-center justify-center rounded-full" style={{ backgroundColor: `${accent}1A` }}>
           <Icon className="h-4 w-4" style={{ color: accent }} />
@@ -480,7 +480,7 @@ export default function AdminLoginHistoryPage(): React.JSX.Element {
       </div>
 
       {showFilters && (
-        <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+        <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-md">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <div>
               <label htmlFor="dateFrom" className={labelClass}>
@@ -558,7 +558,7 @@ export default function AdminLoginHistoryPage(): React.JSX.Element {
         </div>
       )}
 
-      <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+      <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-5 py-4">
           <div>
             <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">Login History</h2>

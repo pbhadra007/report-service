@@ -142,7 +142,7 @@ function StatCard({
   accent: string;
 }): React.JSX.Element {
   return (
-    <div className="flex min-h-[100px] flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white p-6 text-center shadow-sm">
+    <div className="flex min-h-[100px] flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white p-6 text-center shadow-md">
       <span className="text-3xl font-bold text-gray-900">{value}</span>
       <span className="mt-1 text-sm text-gray-500">{label}</span>
       <MiniSparkline points={sparkline} color={accent} />
@@ -395,7 +395,7 @@ export default function AdminUsersPage(): React.JSX.Element {
         />
       </div>
 
-      <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-md">
         <div className="grid grid-cols-4 gap-4">
           <div>
             <label htmlFor="search" className={labelClass}>
@@ -476,7 +476,7 @@ export default function AdminUsersPage(): React.JSX.Element {
       </div>
 
       {viewMode === "table" ? (
-        <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-md">
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-gray-100 bg-white">
@@ -550,7 +550,7 @@ export default function AdminUsersPage(): React.JSX.Element {
             <p className="col-span-full py-6 text-center text-sm text-gray-400">No users found.</p>
           )}
           {pageUsers.map((user, index) => (
-            <div key={user.id} className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+            <div key={user.id} className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-md">
               <div className="flex items-center gap-3">
                 <div
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white"
@@ -592,7 +592,7 @@ export default function AdminUsersPage(): React.JSX.Element {
         </div>
       )}
 
-      <div className="flex items-center justify-center rounded-2xl border border-gray-100 bg-white px-4 py-3 shadow-sm">
+      <div className="flex items-center justify-center rounded-2xl border border-gray-100 bg-white px-4 py-3 shadow-md">
         <div className="flex items-center gap-1">
           <button
             type="button"

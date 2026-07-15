@@ -18,7 +18,7 @@ export default function DashboardLayout({
             id="dashboard-scroll-area"
             className="flex-1 overflow-auto p-6 pb-20 lg:pb-6"
             style={{
-              backgroundImage: "url('/images/login_banner.jpg')",
+              backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)), url('/images/background.jpg')",
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundAttachment: "fixed",

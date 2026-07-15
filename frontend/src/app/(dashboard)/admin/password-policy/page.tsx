@@ -45,7 +45,7 @@ interface StatCardData {
 
 function StatCard({ icon: Icon, label, value, caption, accent, dotColor }: StatCardData): React.JSX.Element {
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+    <div className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-md">
       <div className="flex items-center gap-2">
         <span className="flex h-8 w-8 items-center justify-center rounded-xl" style={{ backgroundColor: `${accent}1A` }}>
           <Icon className="h-4 w-4" style={{ color: accent }} />
@@ -201,7 +201,7 @@ export default function AdminPasswordPolicyPage(): React.JSX.Element {
       {actionMessage && <p className="text-sm font-medium text-gray-600">{actionMessage}</p>}
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
           <div className="border-b border-gray-100 px-5 py-4">
             <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">Password Requirements</h2>
           </div>
@@ -298,7 +298,7 @@ export default function AdminPasswordPolicyPage(): React.JSX.Element {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
           <div className="border-b border-gray-100 px-5 py-4">
             <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">Additional Settings</h2>
           </div>
@@ -373,7 +373,7 @@ export default function AdminPasswordPolicyPage(): React.JSX.Element {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
           <div className="border-b border-gray-100 px-5 py-4">
             <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">Password Strength Preview</h2>
             <p className="mt-1 text-xs text-gray-400">Password must meet all requirements</p>

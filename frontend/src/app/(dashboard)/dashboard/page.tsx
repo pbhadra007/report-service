@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useReportAccess } from "@/hooks/useReportAccess";
 import { REPORT_CATEGORIES, getReportsByCategory } from "@/config/reports.config";
 import { formatDate } from "@/lib/utils";
+import { CATEGORY_ICON_STYLES } from "@/lib/categoryIcons";
 
 interface StatCardProps {
   icon: typeof FileText;
@@ -19,7 +20,7 @@ interface StatCardProps {
 
 function StatCard({ icon: Icon, iconBg, iconColor, label, value, sub }: StatCardProps): React.JSX.Element {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-5">
       <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${iconBg}`}>
         <Icon className={`h-4.5 w-4.5 ${iconColor}`} />
       </div>
@@ -42,7 +43,7 @@ export default function DashboardPage(): React.JSX.Element {
 
   return (
     <div className="grid gap-4">
-      <div className="col-span-full bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex items-center justify-between">
+      <div className="col-span-full bg-white rounded-2xl border border-gray-100 shadow-md p-6 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-gray-800">Welcome back, {user?.name ?? "there"}! 👋</h1>
           <p className="text-sm text-gray-400">Here&apos;s your report summary for today.</p>
@@ -80,30 +81,32 @@ export default function DashboardPage(): React.JSX.Element {
       <div className="flex flex-col gap-3">
         <h2 className="text-sm font-semibold text-gray-600">Report Categories</h2>
         {categoryOverview.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-8 text-center">
             <p className="text-sm font-medium text-gray-600">No reports assigned yet.</p>
             <p className="text-xs text-gray-400 mt-1">Contact the BT team at btteam@ipdcbd.com</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {categoryOverview.map((category) => (
-              <Link
-                key={category.id}
-                href={`/reports/${category.id}`}
-                className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5
-                          hover:shadow-md hover:border-[#ED017F]
-                          transition-all duration-200 cursor-pointer group"
-              >
-                <div className="w-10 h-10 rounded-xl bg-[#FFF0F9] flex items-center
-                                justify-center mb-3 group-hover:bg-[#ED017F] transition-colors">
-                  <span className="text-lg leading-none">{category.icon}</span>
-                </div>
-                <h3 className="font-semibold text-gray-800 text-sm">{category.label}</h3>
-                <p className="text-xs text-gray-400 mt-0.5">
-                  {category.count} report{category.count === 1 ? "" : "s"}
-                </p>
-              </Link>
-            ))}
+            {categoryOverview.map((category) => {
+              const style = CATEGORY_ICON_STYLES[category.id];
+              return (
+                <Link
+                  key={category.id}
+                  href={`/reports/${category.id}`}
+                  className="bg-white rounded-2xl border border-gray-100 shadow-md p-5
+                            hover:shadow-md hover:border-[#ED017F]
+                            transition-all duration-200 cursor-pointer group"
+                >
+                  <div className={`flex h-9 w-9 items-center justify-center rounded-xl mb-3 ${style.iconBg}`}>
+                    <style.icon className={`h-4.5 w-4.5 ${style.iconColor}`} />
+                  </div>
+                  <h3 className="font-semibold text-gray-800 text-sm">{category.label}</h3>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    {category.count} report{category.count === 1 ? "" : "s"}
+                  </p>
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>

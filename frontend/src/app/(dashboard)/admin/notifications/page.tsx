@@ -114,7 +114,7 @@ export default function AdminNotificationsPage(): React.JSX.Element {
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
           <div className="border-b border-gray-100 px-5 py-4">
             <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">Notification Channels</h2>
             <p className="mt-1 text-xs text-gray-400">Enable or disable notification channels</p>
@@ -126,7 +126,7 @@ export default function AdminNotificationsPage(): React.JSX.Element {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
           <div className="border-b border-gray-100 px-5 py-4">
             <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">Notification Preferences</h2>
             <p className="mt-1 text-xs text-gray-400">Configure general notification preferences</p>

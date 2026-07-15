@@ -58,7 +58,7 @@ export default function SchedulePage(): React.JSX.Element {
         </p>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-6">
         <div className="overflow-x-auto rounded-xl border border-gray-100">
           <table className="w-full text-left text-sm">
             <thead>

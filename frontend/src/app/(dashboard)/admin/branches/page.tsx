@@ -278,7 +278,7 @@ interface SummaryCardData {
 
 function SummaryCard({ icon: Icon, label, value, caption, trend, sparkline, accent }: SummaryCardData): React.JSX.Element {
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+    <div className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-md">
       <div className="flex items-center gap-2">
         <span className="flex h-8 w-8 items-center justify-center rounded-xl" style={{ backgroundColor: `${accent}1A` }}>
           <Icon className="h-4 w-4" style={{ color: accent }} />
@@ -627,7 +627,7 @@ export default function AdminBranchesPage(): React.JSX.Element {
         ))}
       </div>
 
-      <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+      <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
         <div className={panelHeaderClass}>
           <h2 className={panelTitleClass}>Search &amp; Filters</h2>
         </div>
@@ -709,7 +709,7 @@ export default function AdminBranchesPage(): React.JSX.Element {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[320px_1fr]">
-        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
           <div className={panelHeaderClass}>
             <h2 className={panelTitleClass}>Branch Overview</h2>
           </div>
@@ -729,7 +729,7 @@ export default function AdminBranchesPage(): React.JSX.Element {
           </div>
         </div>
 
-        <div id="branch-directory" className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div id="branch-directory" className="rounded-2xl border border-gray-100 bg-white shadow-md">
           <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
             <h2 className={panelTitleClass}>Branch Directory</h2>
             <span className="text-xs text-gray-400">
@@ -844,7 +844,7 @@ export default function AdminBranchesPage(): React.JSX.Element {
             <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
               {pageBranches.length === 0 && <p className="col-span-full py-6 text-center text-sm text-gray-400">No branches found.</p>}
               {pageBranches.map((branch) => (
-                <div key={branch.code} className="flex flex-col gap-3 rounded-2xl border border-gray-100 p-5 shadow-sm">
+                <div key={branch.code} className="flex flex-col gap-3 rounded-2xl border border-gray-100 p-5 shadow-md">
                   <div className="flex items-start justify-between">
                     <div className="flex flex-col">
                       <span className="font-bold text-gray-800">{branch.name}</span>
@@ -989,7 +989,7 @@ export default function AdminBranchesPage(): React.JSX.Element {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
           <div className={panelHeaderClass}>
             <h2 className={panelTitleClass}>Quick Actions</h2>
           </div>
@@ -1008,7 +1008,7 @@ export default function AdminBranchesPage(): React.JSX.Element {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
           <div className={panelHeaderClass}>
             <h2 className={panelTitleClass}>Regional Structure</h2>
           </div>

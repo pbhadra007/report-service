@@ -457,7 +457,7 @@ export default function AdminReportAccessPage(): React.JSX.Element {
           );
         })()}
 
-      <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+      <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
         <div className="border-b border-gray-100 px-5 py-4">
           <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">Grant Access to User</h2>
           <p className="mt-1 text-xs text-gray-400">

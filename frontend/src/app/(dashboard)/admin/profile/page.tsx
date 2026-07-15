@@ -487,7 +487,7 @@ export default function AdminProfilePage(): React.JSX.Element {
 
       {actionMessage && <p className="text-sm font-medium text-gray-600">{actionMessage}</p>}
 
-      <div className="relative rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+      <div className="relative rounded-2xl border border-gray-100 bg-white p-6 shadow-md">
         <button
           type="button"
           onClick={() => setShowEditModal(true)}
@@ -566,7 +566,7 @@ export default function AdminProfilePage(): React.JSX.Element {
       </div>
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
           <div className="flex items-center gap-2.5 border-b border-gray-100 px-5 py-4">
             <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#FFE6F4]">
               <UserCircle className="h-4 w-4 text-[#ED017F]" />
@@ -583,7 +583,7 @@ export default function AdminProfilePage(): React.JSX.Element {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
           <div className="flex items-center gap-2.5 border-b border-gray-100 px-5 py-4">
             <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-green-50">
               <ShieldCheck className="h-4 w-4 text-green-600" />

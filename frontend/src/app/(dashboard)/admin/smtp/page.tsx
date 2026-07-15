@@ -44,7 +44,7 @@ interface StatusCardData {
 
 function StatusCard({ icon: Icon, label, value, caption, accent, dotColor, statusIcon: StatusIcon }: StatusCardData): React.JSX.Element {
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+    <div className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-md">
       <div className="flex items-center gap-2">
         <span className="flex h-8 w-8 items-center justify-center rounded-xl" style={{ backgroundColor: `${accent}1A` }}>
           <Icon className="h-4 w-4" style={{ color: accent }} />
@@ -156,7 +156,7 @@ export default function AdminSmtpPage(): React.JSX.Element {
 
       {actionMessage && <p className="text-sm font-medium text-gray-600">{actionMessage}</p>}
 
-      <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+      <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
         <div className="border-b border-gray-100 px-5 py-4">
           <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">SMTP Settings</h2>
         </div>
@@ -347,7 +347,7 @@ export default function AdminSmtpPage(): React.JSX.Element {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+      <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
         <div className="border-b border-gray-100 px-5 py-4">
           <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">Test Email</h2>
           <p className="mt-1 text-xs text-gray-400">Send a test email to verify your SMTP configuration.</p>

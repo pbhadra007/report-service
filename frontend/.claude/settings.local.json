@@ -115,7 +115,10 @@
       "Bash(node test-sidebar2.js)",
       "Bash(node test-mobile-nav.js)",
       "Bash(node test-all-reports.js)",
-      "Bash(node -e \"const m = require\\('lucide-react'\\); console.log\\(typeof m.ListTree, typeof m.Table2, typeof m.Network\\)\")"
+      "Bash(node -e \"const m = require\\('lucide-react'\\); console.log\\(typeof m.ListTree, typeof m.Table2, typeof m.Network\\)\")",
+      "Bash(git checkout *)",
+      "Bash(node *)",
+      "Bash(git *)"
     ]
   }
 }

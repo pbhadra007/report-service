@@ -7,6 +7,7 @@ import { Search } from "lucide-react";
 import { getCategoryById, getReportsByCategory } from "@/config/reports.config";
 import { useReportAccess } from "@/hooks/useReportAccess";
 import { Breadcrumb } from "@/components/common/Breadcrumb";
+import { CATEGORY_ICON_STYLES } from "@/lib/categoryIcons";
 
 export interface ReportCategoryPageProps {
   params: Promise<{ category: string }>;
@@ -31,6 +32,8 @@ export default function ReportCategoryPage({ params }: ReportCategoryPageProps):
     () => accessibleReports.filter((report) => report.name.toLowerCase().includes(search.toLowerCase())),
     [accessibleReports, search],
   );
+
+  const iconStyle = CATEGORY_ICON_STYLES[category.id];
 
   return (
     <div className="flex flex-col gap-6">
@@ -61,7 +64,7 @@ export default function ReportCategoryPage({ params }: ReportCategoryPageProps):
       {isLoading && <p className="text-sm text-gray-400">Loading reports...</p>}
 
       {!isLoading && filteredReports.length === 0 && (
-        <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-gray-100 bg-white p-12 text-center shadow-sm">
+        <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-gray-100 bg-white p-12 text-center shadow-md">
           <Search className="h-8 w-8 text-gray-300" />
           <p className="text-sm text-gray-400">
             {search ? `No reports found for "${search}"` : "No reports available in this category."}
@@ -74,15 +77,12 @@ export default function ReportCategoryPage({ params }: ReportCategoryPageProps):
           {filteredReports.map((report) => (
             <div
               key={report.reportId}
-              className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5
+              className="bg-white rounded-2xl border border-gray-100 shadow-md p-5
                         hover:shadow-md hover:border-[#ED017F]
                         transition-all duration-200 group"
             >
-              <div
-                className="w-10 h-10 rounded-xl bg-[#FFF0F9] flex items-center
-                          justify-center mb-3 group-hover:bg-[#ED017F] transition-colors"
-              >
-                <span className="text-lg leading-none">{category.icon}</span>
+              <div className={`flex h-9 w-9 items-center justify-center rounded-xl mb-3 ${iconStyle.iconBg}`}>
+                <iconStyle.icon className={`h-4.5 w-4.5 ${iconStyle.iconColor}`} />
               </div>
               <h3 className="font-semibold text-gray-800 text-sm">{report.name}</h3>
               <p className="text-xs text-gray-400 mt-0.5">Report ID: {report.reportId}</p>

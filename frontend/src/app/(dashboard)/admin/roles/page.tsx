@@ -202,7 +202,7 @@ interface SummaryCardData {
 
 function SummaryCard({ icon: Icon, label, value, caption, trend, sparkline, accent }: SummaryCardData): React.JSX.Element {
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+    <div className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-md">
       <div className="flex items-center gap-2">
         <span className="flex h-8 w-8 items-center justify-center rounded-xl" style={{ backgroundColor: `${accent}1A` }}>
           <Icon className="h-4 w-4" style={{ color: accent }} />
@@ -685,7 +685,7 @@ export default function AdminRolesPage(): React.JSX.Element {
         ))}
       </div>
 
-      <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+      <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
         <div className="border-b border-gray-100 px-5 py-4">
           <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">Search &amp; Filters</h2>
         </div>
@@ -794,7 +794,7 @@ export default function AdminRolesPage(): React.JSX.Element {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[320px_1fr]">
         <div className="flex flex-col gap-6">
-          <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+          <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
             <div className="border-b border-gray-100 px-5 py-4">
               <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">Role Overview</h2>
             </div>
@@ -817,7 +817,7 @@ export default function AdminRolesPage(): React.JSX.Element {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+          <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
             <div className="border-b border-gray-100 px-5 py-4">
               <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">Quick Actions</h2>
             </div>
@@ -837,7 +837,7 @@ export default function AdminRolesPage(): React.JSX.Element {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
           <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
             <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">Role List</h2>
             <span className="text-xs text-gray-400">
@@ -914,7 +914,7 @@ export default function AdminRolesPage(): React.JSX.Element {
             <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
               {pageRoles.length === 0 && <p className="col-span-full py-6 text-center text-sm text-gray-400">No roles found.</p>}
               {pageRoles.map(([role, permissions]) => (
-                <div key={role} className="flex flex-col gap-3 rounded-2xl border border-gray-100 p-5 shadow-sm">
+                <div key={role} className="flex flex-col gap-3 rounded-2xl border border-gray-100 p-5 shadow-md">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2">
                       <input

@@ -58,7 +58,7 @@ export function StatCard({ icon: Icon, iconBg, iconColor, label, value, sub, tre
   const TrendIcon = trend === "up" ? ArrowUp : ArrowDown;
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 overflow-hidden">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-6 overflow-hidden">
       <div className="flex items-start justify-between">
         <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${iconBg}`}>
           <Icon className={`h-6 w-6 ${iconColor}`} />
@@ -111,7 +111,7 @@ export function QuickAccessCard({
   onClick,
 }: QuickAccessCardProps): React.JSX.Element {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-md overflow-hidden group">
       <div className="h-1 w-full" style={{ backgroundColor: accentColor }} />
       <div className="p-6">
         <div
@@ -156,7 +156,7 @@ export default function AdminDashboardPage(): React.JSX.Element {
 
   return (
     <div className="grid gap-4">
-      <div className="col-span-full bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex items-center justify-between">
+      <div className="col-span-full bg-white rounded-2xl border border-gray-100 shadow-md p-6 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-gray-800">Welcome back, {user?.name ?? "Admin"}! 👋</h1>
           <p className="text-sm text-gray-400">Here&apos;s your system summary for today.</p>

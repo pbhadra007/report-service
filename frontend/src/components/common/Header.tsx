@@ -59,7 +59,9 @@ export function Header(): React.JSX.Element {
   return (
     <header className="sticky top-0 z-30 flex h-20 w-full shrink-0 items-center justify-between border-b border-gray-100 bg-white px-6">
       <div className="flex items-center gap-4">
-        <Image src="/images/ipdc-logo.png" alt="IPDC" width={150} height={74} className="h-16 w-auto object-contain" priority />
+        <Link href="/dashboard" aria-label="Go to dashboard">
+          <Image src="/images/ipdc-logo.png" alt="IPDC" width={150} height={74} className="h-16 w-auto object-contain" priority />
+        </Link>
         <div className="hidden h-8 w-px bg-gray-100 sm:block" />
         <h1 className="hidden text-lg font-semibold text-gray-800 sm:block">{getPageTitle(pathname)}</h1>
       </div>

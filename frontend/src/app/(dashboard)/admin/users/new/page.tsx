@@ -139,7 +139,7 @@ export default function AdminCreateUserPage(): React.JSX.Element {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-6">
           <h2 className="mb-4 text-sm font-semibold text-gray-500 uppercase tracking-wide">User Details</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
@@ -341,7 +341,7 @@ export default function AdminCreateUserPage(): React.JSX.Element {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-6">
           <h2 className="mb-4 text-sm font-semibold text-gray-500 uppercase tracking-wide">Security Policy Setup</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div>

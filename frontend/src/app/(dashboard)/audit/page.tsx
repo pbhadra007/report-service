@@ -124,7 +124,7 @@ export default function AuditPage(): React.JSX.Element {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-5">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-gray-800">Audit Log</h1>
           <button

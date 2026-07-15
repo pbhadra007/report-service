@@ -10,7 +10,7 @@ export interface AppSettings {
 export const DEFAULT_APP_SETTINGS: AppSettings = {
   appName: "IPDC Report Service",
   supportEmail: "btteam@ipdcbd.com",
-  footerText: "© 2026 - Business Transformation, IPDC Finance Limited",
+  footerText: "© 2026 - Business Transformation, IPDC Finance PLC",
   maintenanceMode: false,
 };
 

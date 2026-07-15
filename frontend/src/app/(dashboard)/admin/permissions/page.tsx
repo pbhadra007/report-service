@@ -318,7 +318,7 @@ interface SummaryCardData {
 
 function SummaryCard({ icon: Icon, label, value, caption, trend, sparkline, accent }: SummaryCardData): React.JSX.Element {
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+    <div className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-md">
       <div className="flex items-center gap-2">
         <span className="flex h-8 w-8 items-center justify-center rounded-xl" style={{ backgroundColor: `${accent}1A` }}>
           <Icon className="h-4 w-4" style={{ color: accent }} />
@@ -756,7 +756,7 @@ export default function AdminPermissionsPage(): React.JSX.Element {
         ))}
       </div>
 
-      <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+      <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
         <div className={panelHeaderClass}>
           <h2 className={panelTitleClass}>Search &amp; Filters</h2>
         </div>
@@ -852,7 +852,7 @@ export default function AdminPermissionsPage(): React.JSX.Element {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[320px_1fr]">
         <div className="flex flex-col gap-6">
-          <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+          <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
             <div className={panelHeaderClass}>
               <h2 className={panelTitleClass}>Permission Overview</h2>
             </div>
@@ -875,7 +875,7 @@ export default function AdminPermissionsPage(): React.JSX.Element {
             </div>
           </div>
 
-          <div id="permission-groups-anchor" className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+          <div id="permission-groups-anchor" className="rounded-2xl border border-gray-100 bg-white shadow-md">
             <div className={panelHeaderClass}>
               <h2 className={panelTitleClass}>Quick Actions</h2>
             </div>
@@ -895,7 +895,7 @@ export default function AdminPermissionsPage(): React.JSX.Element {
           </div>
         </div>
 
-        <div id="permission-matrix" className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div id="permission-matrix" className="rounded-2xl border border-gray-100 bg-white shadow-md">
           <div className={panelHeaderClass}>
             <h2 className={panelTitleClass}>Permission Matrix</h2>
           </div>
@@ -1016,7 +1016,7 @@ export default function AdminPermissionsPage(): React.JSX.Element {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
           <div className={panelHeaderClass}>
             <h2 className={panelTitleClass}>Permission Modules</h2>
           </div>
@@ -1053,7 +1053,7 @@ export default function AdminPermissionsPage(): React.JSX.Element {
           </div>
         </div>
 
-        <div id="permission-groups" className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div id="permission-groups" className="rounded-2xl border border-gray-100 bg-white shadow-md">
           <div className={panelHeaderClass}>
             <h2 className={panelTitleClass}>Permission Groups</h2>
           </div>
@@ -1091,7 +1091,7 @@ export default function AdminPermissionsPage(): React.JSX.Element {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="rounded-2xl border border-gray-100 bg-white shadow-md">
           <div className={panelHeaderClass}>
             <h2 className={panelTitleClass}>Permission Summary</h2>
           </div>
@@ -1133,7 +1133,7 @@ export default function AdminPermissionsPage(): React.JSX.Element {
         </div>
       </div>
 
-      <div id="permission-table" className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+      <div id="permission-table" className="rounded-2xl border border-gray-100 bg-white shadow-md">
         <div className={panelHeaderClass}>
           <h2 className={panelTitleClass}>All Permissions</h2>
         </div>

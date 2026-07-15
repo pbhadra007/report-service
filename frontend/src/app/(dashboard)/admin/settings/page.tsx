@@ -61,7 +61,7 @@ export default function AdminSettingsPage(): React.JSX.Element {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-6">
           <h2 className="mb-4 text-sm font-semibold text-gray-500 uppercase tracking-wide">App Settings</h2>
 
           {settingsQuery.isError && (
